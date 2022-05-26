@@ -1,0 +1,3 @@
+13;Plastico;Armazenar limpo e seco;
+10;foo;bar;12;
+15;Garrafa PET;Entregar limpo e seco. Pode estar amassado;13;

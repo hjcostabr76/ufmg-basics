@@ -1,0 +1,96 @@
+
+** PDS2 **
+** Trabalho Pratico Final
+*** Sistema de Auxilio a Coleta Seletiva
+**** Entidades
+
+
+- Indice
+	- Agendamento
+	- Ponto de Coleta
+	- Residuo
+	- Usuario
+
+
+=======================================
+- Usuario
+- Usuario Doador
+- Usuario Receptor
+
+	- Descricao
+		- PF/PJ
+		- Tipos
+			- Usuario Doador
+				- Responsavel por reunir residuos a serem recolhidos
+
+			- Usuario Receptor
+				- Responsavel por coletar residuos a serem recolhidos
+
+	- Campos
+		- Codigo
+		- CPF/CNPJ
+		- Tipo
+		- Nome
+		- Tipos de residuo de interesse
+
+
+=======================================
+- Residuo
+
+	- Descricao
+		- Define
+			- Tipos de residuo que podem ser doados/recolhidos
+			- Forma apropriada para armazenamento de cada tipo de residuo
+
+		- e.g:
+			- Liquido
+			- Solido
+				- Metal
+				- Vidro
+				- Plastico
+
+	- Campos
+		- Codigo
+		- Nome
+		- Forma de armazenamento
+
+
+=======================================
+- Ponto de Coleta
+
+	- Descricao
+		- Local para doacao / recepcao de residuos
+
+	- Campos
+		- Codigo
+		- Nome
+		- Endereco
+			- Cep
+			- Estado
+			- Cidade
+			- Bairro
+			- Rua
+			- Numero
+			- Complemento
+
+
+=======================================
+- Agendamento
+
+	- Descricao
+		- Descreve 01 encontro entre 01 usuario doador & 01 usuario receptor para troca de residuos
+		- Define
+			- Qual(is) residuo(s) sera(o) doado(s)
+			- Local
+			- Data/Horario
+			- SE a troca realmente aconteceu
+
+	- Campos
+		- Codigo
+		- Data
+		- Horario
+		- Local (fk) {{ Ponto de Coleta }}
+		- Doador (fk) {{ Usuario Doador }}
+		- Receptor (fk) {{ Usuario Coletor }}
+		- Lista de Residuos[] (fk) {{ Residuo }}
+		- Realizada? (flag)

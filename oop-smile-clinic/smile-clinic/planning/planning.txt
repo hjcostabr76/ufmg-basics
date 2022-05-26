@@ -1,0 +1,55 @@
+- Hierarquia polimorfica
+- Criar atributos nao especificados para as classes (se necessario)
+
+- Classes
+    - Pessoa
+        - Descricao
+            - Classe abstrata
+            - Modela PF
+
+        - Derivadas
+            - Paciente
+                - Derivadas
+                    - PacienteOrtodontia
+                    - PacientePediatria
+                    - PacienteClinicaGeral
+
+            - Funcionario
+                - Derivadas
+                    - Secretaria
+                    - ClinicoGeral
+                    - Pediatra
+                    - Ortodontista
+
+    - Orcamento
+        - Atributos
+            - Paciente
+            - Procedimentos
+            - DataPagamento
+        
+        - Metodos
+            - getValorTotal
+            - getProcedimentos
+
+    - Procedimento
+        - Atributos
+            - DataProcedimento
+            - Dentista
+
+    - Clinica
+        - Descricao
+            - Utilizar classes container
+            - Pessoas sao adicionadas dinamicamente
+        
+        - Funcionalidades
+            - Notificacao de promocao
+                - Para todos os clientes
+
+            - Destrutor
+                - Desaloca formas apontadas pelos ponteiros para pessoa
+
+        - Atributos
+            - Pessoas
+                - Inclui
+                    - Funcionarios
+                    - Clientes

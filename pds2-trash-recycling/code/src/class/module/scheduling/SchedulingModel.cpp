@@ -1,0 +1,4 @@
+#ifndef _SCHEDULING_MODEL_CPP_
+#define _SCHEDULING_MODEL_CPP_
+
+#endif

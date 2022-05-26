@@ -1,0 +1,2 @@
+101;Praca da Rodoviaria;
+100;Escola de Engenharia;

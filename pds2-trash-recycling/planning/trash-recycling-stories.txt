@@ -1,0 +1,167 @@
+
+** PDS2 **
+** Trabalho Pratico Final
+*** Sistema de Auxilio a Coleta Seletiva
+**** Estorias
+
+- Indice
+	- ***Estoria: Agendamento de Coleta por Doador
+	- ***Estoria: Agendamento de Coleta por Receptor
+
+	- Estoria: Cadastro de Novo Tipo Residuos
+	- Estoria: Cadastro de novo Usuario
+
+	- Estoria: Computar coleta realizada
+
+	- Estoria: Editar cadastro de usuario
+	- Estoria: Editar Tipo Residuo Cadastrado
+	
+	- Estoria: Listar/Remover tipo de residuo cadastrado
+	- Estoria: Listar/Remover usuarios cadastrados
+
+	- Estoria: Login de Usuario
+	
+	- Estoria: Menu principal
+	
+	- Estoria: Visualizar minhas Coletas agendadas
+
+
+=======================================
+- Estoria: Menu principal
+
+	- Como 01 usuario, eu desejo visualizar 01 menu com as opcoes de uso do sistema
+	- Neste procedimento eu devo poder
+		- Visualizar & selecionar a opcao de Fazer Login
+		- Visualizar & selecionar a opcao de Realizar cadastro
+		- Visualizar & selecionar a opcao de Sair do sistema (encerrar sessao)
+
+
+=======================================
+- Estoria: Cadastro de novo Usuario
+
+	- Como 01 usuario comum, eu desejo realizar o meu proprio cadastro no sistema
+		- Neste procedimento eu vou
+			- Informar SE meu cadastro sera de PF OU de PJ
+				- SE meu cadastro for de PF, devo informar meu CPF
+				- SENAO devo informar meu CNPJ
+
+			- Informar SE serei 01 doador ou 01 receptor de residuos
+			- Informar meu nome
+			- Informar os tipos de residuos que eu tenho interesse em doar/receber, dentre a lista de tipos de residuos cadastrados
+
+
+=======================================
+- Estoria: Login de Usuario
+
+	- Como 01 usuario, eu desejo realizar login dentro do sistema
+	- Neste procedimento eu devo infomar o codigo do meu cadastro
+	- Caso o codigo informado seja valido, o sistema deve
+		- Exibir uma mensagem de confimacao/boas vindas
+		- Listar as acoes disponiveis para mim
+
+
+=======================================
+- Estoria: Cadastro de Novo Tipo Residuos
+
+	- Como 01 usuario ADMINISTRADOR eu desejo cadastrar tipos de residuo que poderao ser doados/recebidos atraves do sistema
+	- Neste procedimento eu devo poder informar
+		- 01 codigo de identificacao para o tipo de residuo
+		- Nome do tipo de residuo
+		- SE ele eh subtipo de algum outro tipo previamente cadastrado
+			- CASO seja subtipo, devo selecionar de qual dos tipos ja cadastrados o novo tipo sera subtipo
+
+		- Forma de armazenamento adequada para o novo tipo/subtipo
+
+
+=======================================
+- Estoria: Listar/Remover tipo de residuo cadastrado
+
+	- Como 01 usuario ADMINISTRADOR eu desejo visualizar todos os tipos/subtipos de residuo cadastrados no sistema
+	- Neste procedimento eu devo poder 
+		- Visualizar todos os tipos de residuos disponiveis no momento
+		- Informar se deseja editar ou remover algum dos itens da lista
+		- CASO selecione a opcao EDITAR
+			- Selecionar o item da lista a ser editado
+
+		- CASO selecione a opcao REMOVER
+			- Selecionar o item da lista a ser removido & concluir sua remocao
+
+
+=======================================
+- Estoria: Editar Tipo Residuo Cadastrado
+
+	- Como 01 usuario ADMINISTRADOR eu desejo atualizar o cadastro de 01 tipo de residuo a ser doado/recebido atraves do sistema, ja cadastrado por mim, anteriormente
+	- Neste procedimento eu devo poder alterar
+		- Nome do tipo de residuo
+		- Forma de armazenamento adequada para o tipo/subtipo
+		- SE ele eh subtipo de algum outro tipo previamente cadastrado
+			- CASO seja subtipo, devo selecionar de qual dos tipos ja cadastrados ele deve ser subtipo
+
+
+=======================================
+- Estoria: Editar cadastro de usuario
+
+	- Como 01 usuario de qualquer tipo, eu desejo atualizar os dados do meu proprio cadastro
+		- Neste procedimento eu poderei alterar
+			- SE sou 01 doador ou 01 receptor de residuos
+			- meu nome
+			- SE meu cadastro eh de PF OU de PJ
+				- SE meu cadastro for de PF, devo informar meu CPF
+				- SENAO devo informar meu CNPJ
+
+			- Informar os tipos de residuos que eu tenho interesse em doar/receber, dentre a lista de tipos de residuos cadastrados
+
+
+=======================================
+- Estoria: Listar/Remover usuarios cadastrados
+
+	- Como 01 usuario do tipo ADMINSTRADOR, eu desejo listar todos os usuarios cadastrados no sistema
+	- Visualizar todos os usuarios cadastrados no momento
+		- Informar se deseja editar ou remover algum dos itens da lista
+		- CASO selecione a opcao EDITAR
+			- Selecionar o item da lista a ser editado
+
+		- CASO selecione a opcao REMOVER
+			- Selecionar o item da lista a ser removido & concluir sua remocao
+
+=======================================
+- Estoria: Agendamento de Coleta por Doador
+
+	- Como 01 usuario do tipo DOADOR eu desejo agendar 01 doacao de residuo
+	- Neste procedimento eu vou
+		- Definir um codigo de identificacao do agendamento a ser criado
+		- Definir data prevista para a coleta agendada
+		- Selecionar qual(is) residuo(s) vou doar, dentre a minha lista de residuos (residuos que posso doar)
+		- Selecionar para qual receptor eu vou fazer a doacao
+		- Selecionar 01 Ponto de Coleta dentre a lista de pontos de coletas disponiveis, no momento
+
+
+=======================================
+- Estoria: Agendamento de Coleta por Receptor
+
+	- Como 01 usuario do tipo RECEPTOR eu desejo agendar 01 recolhimento de residuo
+	- Neste procedimento eu vou
+		- Definir um codigo de identificacao do agendamento a ser criado
+		- Definir data prevista para a coleta agendada
+		- Selecionar qual(is) residuo(s) desejo receber, dentre a minha lista de residuos (residuos que posso receber)
+		- Selecionar de qual doador eu vou receber a doacao
+		- Selecionar 01 Ponto de Coleta dentre a lista de pontos de coletas disponiveis, no momento
+
+
+=======================================
+- Estoria: Visualizar minhas Coletas agendadas
+- Estoria: Computar coleta realizada
+
+	- Como 01 usuario doador ou receptor, eu desejo listar todos os agendamentos de coleta de residuos nos quais eu esteja alocado
+	- Neste procedimento eu devo poder
+		- Visualizar lista de agendamentos em que estou alocado
+		- Informar se desejo editar, remover ou alterar o status de realizacao de algum dos itens da lista
+
+		- CASO selecione a opcao EDITAR
+			- Selecionar o item da lista a ser editado
+
+		- CASO selecione a opcao REMOVER
+			- Selecionar o item da lista a ser removido & concluir sua remocao
+
+		- CASO selecione a opcao ALTEARAR STATUS de REALIZACAO
+			- Selecionar o item da lista a o status altearado & concluir a alteracao

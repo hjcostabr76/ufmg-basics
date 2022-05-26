@@ -1,0 +1,4 @@
+#ifndef _MEETINGPOINT_MODEL_CPP_
+#define _MEETINGPOINT_MODEL_CPP_
+
+#endif

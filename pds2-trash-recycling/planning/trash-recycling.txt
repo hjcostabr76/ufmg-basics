@@ -1,0 +1,133 @@
+
+** PDS2 **
+** Trabalho Pratico Final
+*** Sistema de Auxilio a Coleta Seletiva
+
+
+- Indice
+	- Descricao
+	- Entidades
+	- Estorias
+		- Estoria: Agendamento de Coleta por Doador
+		- Estoria: Agendamento de Coleta por Receptor
+
+		- Estoria: Cadastro de Novo Tipo Residuos
+		- Estoria: Cadastro de novo Usuario
+
+		- Estoria: Computar coleta realizada
+
+		- Estoria: Editar cadastro de usuario
+		- Estoria: Editar Tipo Residuo Cadastrado
+		
+		- Estoria: Listar/Remover tipo de residuo cadastrado
+		- Estoria: Listar/Remover usuarios cadastrados
+
+		- Estoria: Login de Usuario
+		
+		- Estoria: Menu principal
+		
+		- Estoria: Visualizar minhas Coletas agendadas
+		
+	- O que entregar
+
+
+=======================================
+- Descricao
+
+	- Sistema que auxilie moradores, empresas, condomı́nios e escolas, na implantacao de 01 projeto de coleta seletiva
+	- Dado que exista
+		- 01 usuario com a necessidade de descartar 01 resıduo de forma adequada
+		- 01 usuario que se propoe a realizar descarte/reutilizacao de forma correta
+
+	- O sistema deve intermediar a negociacao
+
+
+=======================================
+- O que entregar
+
+	- User Stories
+		- Entrega parcial
+			- Valor: [06pts]
+
+		- Deve posteriormente ser incluso na documentacao/Relatorio (entrega final)
+
+	- Programa
+		- Valor
+			- Funcionamento: [10pts]
+				- Compilar
+				- Executar
+
+			- Implementacao: [05pts]
+				- Utilizacao dos conceitos de POO
+				- Aplicacao de boas praticas de programacao
+
+			- Testes: [04pts]
+				- Proposicao de testes
+				- Comportamento frente a entrada de dados invalida
+
+			- Funcionalidade extra (opcional)
+				- Valor: (ate) [03pts]
+
+		- Descricao
+			- Via github
+
+	- Arquivo Makefile
+		- Opcoes
+			- make
+			- make run
+
+	- Relatorio
+		- Valor: [5pts]
+		- Conteudo
+			- Introducao
+			- Estorias
+			- Detalhes dos casos de uso
+			- Dificultades encontradas
+			- Implementacao
+				- Detalhar estrutura de dados
+				- Detalhar funcionamento das (principais) funcoes
+				- Discorrer sobre decisoes tomadas
+				- Discorrer sobre como conceitos de POO foram aplicados
+
+			- Testes
+				- Propostas de testes de validacao
+				- Resultados dos testes propostos
+				- Detalhes dos procedimentos de teste realizados (relacionando com trechos do codigo)
+					- Prints
+						- Menus
+						- Saidas
+
+			- Conclusao
+				- Comentarios gerais
+					- Dificuldades
+					- Decisoes na implementacao
+
+			- Bibliografia
+				- Referencias
+					- Sites (lembrar de data/horario)
+					- Livros
+					- Cursos
+
+
+=======================================
+- Entidades
+
+	- Ver arquivo: Entidades .txt
+
+
+=======================================
+- Estorias
+- Estoria: Agendamento de Coleta por Doador
+- Estoria: Agendamento de Coleta por Receptor
+- Estoria: Cadastro de Novo Tipo Residuos
+- Estoria: Cadastro de novo Usuario
+- Estoria: Computar coleta realizada
+- Estoria: Editar cadastro de usuario
+- Estoria: Editar Tipo Residuo Cadastrado
+- Estoria: Listar/Remover tipo de residuo cadastrado
+- Estoria: Listar/Remover usuarios cadastrados
+- Estoria: Login de Usuario
+- Estoria: Menu principal
+- Estoria: Visualizar minhas Coletas agendadas
+
+	- Ver arquivo: Estorias .txt
