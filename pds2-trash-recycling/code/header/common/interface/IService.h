@@ -8,13 +8,6 @@
 
 using namespace std;
 
-/**
- * SERVICO
- * Interface a ser implementada por classes que implementem a funcao de SERVICO no sistema
- * Trash Recycling System
- *
- * @author hjcostabr
- */
 class IService {
 
 public:
