@@ -6,107 +6,9 @@
 #include <fstream>
 #include <sstream>
 
-#define DEBUG_ENABLE true
-
-#define CARDS_COUNT 5
-#define CARD_SUIT_SPADES 'E'
-#define CARD_SUIT_HEARTS 'C'
-#define CARD_SUIT_CLUBS 'P'
-#define CARD_SUIT_DIAMONDS 'O'
-
-using namespace std;
+#include "../include/common.h"
 
 const string filePath = "src/entrada.txt";
-
-typedef struct {
-    char suit;
-    int number;
-} Card;
-
-typedef struct {
-    int bid;
-    string playerName;
-    Card cards[CARDS_COUNT];
-} Play;
-
-typedef struct {
-    int money;
-    string name;
-    Play* plays;
-} Player;
-
-typedef struct {
-    int blind;
-    int nPlays;
-    Play* plays;
-} Round;
-
-typedef struct {
-    int nRounds;
-    int initialAmount;
-    Round* rounds;
-} Game;
-
-
-string dbgGetCardPrint(const Card card) {
-    string suit;
-    suit += card.suit;
-    return "[card] suit: '" + suit + "'; number: '" + to_string(card.number) + "';";
-}
-
-string dbgGetPlayPrint(const Play play) {
-    string print = "[play] bid: '" + to_string(play.bid) + "'; playerName: '" + play.playerName + "'; cards:";
-    for (int i = 0; i < CARDS_COUNT; i++)
-        print += "\n\t\t\t" + dbgGetCardPrint(play.cards[i]);
-    return print;    
-}
-
-string dbgGetRoundPrint(const Round round) {
-    string print = "[round] blind: '" + to_string(round.blind) + "'; nPlays: '" + to_string(round.nPlays) + "'; plays:";
-    for (int i = 0; i < round.nPlays; i++)
-        print += "\n\t\t" + dbgGetPlayPrint(round.plays[i]);
-    return print;
-}
-
-
-string dbgGetGamePrint(const Game game) {
-    string print = "[game] nRounds: '" + to_string(game.nRounds) + "'; initialAmount: '" + to_string(game.initialAmount) + "'; rounds:";
-    for (int i = 0; i < game.nRounds; i++)
-        print += "\n\t" + dbgGetRoundPrint(game.rounds[i]);
-    return print;
-}
-
-void dbgPrintGame(const Game game) {
-    if (DEBUG_ENABLE) {
-        cout << "---------- DBG: Game ----------" << endl;
-        cout << dbgGetGamePrint(game);
-        cout << endl;
-        cout << "---------- || --- || ----------" << endl;
-    }
-}
-
-void dbgPrintRound(const Round round) {
-    if (DEBUG_ENABLE) {
-        cout << "---------- DBG: Round ---------" << endl;
-        cout << dbgGetRoundPrint(round);
-        cout << endl;
-        cout << "---------- || --- || ----------" << endl;
-    }
-}
-
-void dbgPrintPLay(const Play play) {
-    if (DEBUG_ENABLE) {
-        cout << "---------- DBG: Play ----------" << endl;
-        cout << dbgGetPlayPrint(play);
-        cout << endl;
-        cout << "---------- || --- || ----------" << endl;
-    }
-}
-
-void dbgStep(string msg) {
-    if (DEBUG_ENABLE)
-        cout << msg << endl;
-}
 
 // Play readPlay(ifstream &inputStream) {
 
@@ -199,7 +101,8 @@ Game readGame(ifstream &inputStream) {
     return game;
 }
 
-int main(int argc, char const *argv[]) {
+// int main(int argc, char const *argv[]) {
+int main() {
 
     std::cout << endl << "-- POKER system --" << endl << endl;
 
