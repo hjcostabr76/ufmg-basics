@@ -1,6 +1,0 @@
-make --dry-run --always-make --keep-going --print-directory
-make: Entering directory '/home/hjcosta/Documents/ufmg/ufmg-basics'
-make: Leaving directory '/home/hjcosta/Documents/ufmg/ufmg-basics'
- 
-make: *** No targets specified and no makefile found.  Stop.
-

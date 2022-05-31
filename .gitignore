@@ -1,0 +1,12 @@
+# IDE
+.vscode/*
+.idea/*
+
+# Generated
+/build/*
+/**/*.o
+/**/*.gch
+trash-recycling
+
+# Storage
+#/**/*storage/*
