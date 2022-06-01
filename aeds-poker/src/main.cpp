@@ -8,35 +8,26 @@
 
 #include "../include/common.h"
 
-const string filePath = "src/entrada.txt";
+Play readPlay(ifstream &inputStream) {
 
-// Play readPlay(ifstream &inputStream) {
+    string aux;
+    string line;
+    getline(inputStream, line);
+    stringstream lineStream(line);
 
-//     string aux;
-//     string line;
-//     getline(inputStream, line);
-//     stringstream lineStream(line);
+    Play play;
+    getline(lineStream, play.playerName, ' ');
+    getline(lineStream, aux, ' ');
+    play.bid = stoi(aux);
 
-
-//     cout << "readPlay" << endl;
-
-//     Play play;
-//     getline(lineStream, play.playerName, ' ');
-//     getline(lineStream, aux, ' ');
-//     play.bid = stoi(aux);
-
-//     for (int i = 0; i < CARDS_COUNT; i++) {
-
-//         cout << "read card..." << endl;
-
-//         getline(lineStream, aux, ' ');
-//         // play.cards[i].suit = aux[aux.length() - 1];
-//         // play.cards[i].number = stoi(aux.substr(0, aux.length() - 1));
-//     }
-
-//     cout << "readPlay 2..." << endl;
-//     return play;
-// }
+    for (int i = 0; i < CARDS_COUNT; i++) {
+        getline(lineStream, aux, ' ');
+        play.cards[i].suit = aux[aux.length() - 1];
+        play.cards[i].number = stoi(aux.substr(0, aux.length() - 1));
+    }
+    
+    return play;
+}
 
 Round readRound(ifstream &inputStream) {
 
@@ -54,26 +45,9 @@ Round readRound(ifstream &inputStream) {
 
     // Read round plays
     round.plays = (Play*)malloc(round.nPlays * sizeof(Play));
-    // round.plays[0] = readPlay(inputStream);
-    // for (int i = 0; i < round.nPlays; i++)
-    //     round.plays[i] = *readPlay(inputStream);
-
     for (int i = 0; i < round.nPlays; i++) {
-        getline(inputStream, line);
-        lineStream = stringstream(line);
-
-        Play play;
-        getline(lineStream, play.playerName, ' ');
-        getline(lineStream, aux, ' ');
-        play.bid = stoi(aux);
-
-        for (int i = 0; i < CARDS_COUNT; i++) {
-            getline(lineStream, aux, ' ');
-            play.cards[i].suit = aux[aux.length() - 1];
-            play.cards[i].number = stoi(aux.substr(0, aux.length() - 1));
-        }
-
-        round.plays[i] = play;   
+        Play play = readPlay(inputStream);
+        round.plays[i] = play;
     }
     
     return round;
@@ -101,29 +75,40 @@ Game readGame(ifstream &inputStream) {
     return game;
 }
 
-// int main(int argc, char const *argv[]) {
-int main() {
-
+int main(int argc, char const *argv[]) {
+    
     std::cout << endl << "-- POKER system --" << endl << endl;
 
     ifstream readingStream;
     bool statusOK = true;
 
     try {
+
+        // Read file
+        if (argc != 2)
+            throw invalid_argument("Invalid parameters number");
+
+        const string filePath = argv[1];
         readingStream = ifstream(filePath);
         if (!readingStream.good())
             throw runtime_error("Failure as trying to read input file");
 
+        // Build game
         Game game = readGame(readingStream);
         dbgPrintGame(game);
 
+        // All good
         cout << endl << "FIM" << endl;
 
+    } catch (invalid_argument &error) {
+        cout << "Invalid command!" << endl;
+        cout << "Input format: ./poker [input-file-path]" << endl << endl;
+    
     } catch (exception &error) {
         statusOK = false;
-        cout << endl << "-- Ops! Something wrong isn't right... --" << endl;
+        cout << "-- Ops! Something wrong isn't right... --" << endl;
         if (DEBUG_ENABLE)
-            cout << error.what() << endl;
+            cout << "What went wrong: '" << error.what() << "'" << endl;
         cout << endl;
     }
 
