@@ -1,12 +1,7 @@
 #pragma once
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <iostream>
-#include <memory>
-#include <exception>
 #include <fstream>
-#include <sstream>
 
 using namespace std;
 
@@ -66,14 +61,6 @@ typedef struct {
  * =================================================
  */
 
-/** --- Debug -------------------------- */
-
-string dbgGetCardPrint(const Card card);
-string dbgGetPlayPrint(const Play play);
-string dbgGetRoundPrint(const Round round);
-string dbgGetGamePrint(const Game game);
-
-void dbgPrintGame(const Game game);
-void dbgPrintRound(const Round round);
-void dbgPrintPLay(const Play play);
-void dbgStep(string msg);
+Play readPlay(ifstream &inputStream);
+Round readRound(ifstream &inputStream);
+Game readGame(ifstream &inputStream);

@@ -1,12 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <iostream>
-#include <memory>
-#include <exception>
-#include <fstream>
-#include <sstream>
-
-#include "../include/common.h"
+#include "../include/debug.h"
 
 using namespace std;
 
