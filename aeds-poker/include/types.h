@@ -21,6 +21,8 @@ using namespace std;
 #define SUIT_HEARTS 'C'
 #define SUIT_DIAMONDS 'O'
 
+const char SUITS_LIST[SUITS_COUNT] = { SUIT_CLUBS, SUIT_SPADES, SUIT_HEARTS, SUIT_DIAMONDS };
+
 /**
  * =================================================
  * -- ABSTRACT -------------------------------------

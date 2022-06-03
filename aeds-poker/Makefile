@@ -3,15 +3,25 @@ CFLAGS = -W -Wall -g -Wextra
 
 main: obj/poker.o obj/game.o obj/debug.o
 	$(CC) $(CFLAGS) -o bin/poker obj/poker.o obj/game.o obj/debug.o
- 
-obj/poker.o: src/main.cpp include/game.h include/debug.h
+
+test_hands: obj/testHands.o obj/game.o obj/debug.o
+	$(CC) $(CFLAGS) -o bin/testHands obj/testHands.o obj/game.o obj/debug.o
+
+#################################################################################
+
+obj/poker.o: src/main.cpp include/types.h include/game.h include/debug.h
 	$(CC) $(CFLAGS) -c src/main.cpp -o obj/poker.o
 
-obj/debug.o: include/game.h include/debug.h
+obj/debug.o: src/debug.cpp include/types.h include/debug.h
 	$(CC) $(CFLAGS) -c src/debug.cpp -o obj/debug.o
 
-obj/game.o: include/game.h include/debug.h
+obj/game.o: src/game.cpp include/types.h include/game.h include/debug.h
 	$(CC) $(CFLAGS) -c src/game.cpp -o obj/game.o
+
+#################################################################################
+
+obj/testHands.o: test/testHands.cpp include/types.h include/game.h include/debug.h
+	$(CC) $(CFLAGS) -c test/testHands.cpp -o obj/testHands.o
 
 clean:
 	rm -rf obj/* bin/*

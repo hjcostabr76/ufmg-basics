@@ -12,7 +12,7 @@ string dbgGetCardsPrint(const Card* cards, const int nCards) {
         suit += cards[i].suit;
         print += "\t[card] suit: '" + suit + "'; number: '" + to_string(cards[i].number) + "';";
         
-        if (i > 0)
+        if (nCards > 1)
             print += "\n";
     }
     

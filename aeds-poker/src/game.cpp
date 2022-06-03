@@ -15,12 +15,12 @@ bool isSequence(const Card cards[CARDS_PER_HAND]) {
     
     for (int i = 1; i < CARDS_PER_HAND; i++) {
 
-        int prevNumber = cards[i - 1].number - 1;
+        int prevNumber = cards[i - 1].number;
         int currentNumber = cards[i].number;
         
         bool isValidNumber = (
-            (prevNumber != 13 & currentNumber == (prevNumber + 1))
-            || (prevNumber == 13 & currentNumber == 1) // Considers the ace as the last card
+            (prevNumber != 13 && currentNumber == (prevNumber + 1))
+            || (prevNumber == 13 && currentNumber == 1) // Considers the ace as the last card
         );
         
         if (!isValidNumber)
@@ -30,12 +30,12 @@ bool isSequence(const Card cards[CARDS_PER_HAND]) {
     return true;
 }
 
-bool isSameSuitSequence(const Card cards[CARDS_PER_HAND]) {
+bool isSameSuitSequence(const Card cards[CARDS_PER_HAND], char &suit) {
 
     if (!isSequence(cards))
         return false;
 
-    char suit = cards[0].suit;
+    suit = cards[0].suit;
     for (int i = 1; i < CARDS_PER_HAND; i++) {
         if (cards[i].suit != suit)
             return false;
@@ -62,8 +62,12 @@ Hand getEmptyHand(void) {
 Hand getHand(const Card cards[CARDS_PER_HAND]) {
 
     Hand hand = getEmptyHand();
-    if (isRoyalStraightFlush(cards))
+
+    char suit;
+    if (isRoyalStraightFlush(cards, suit)) {
         hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
+        hand.suit = suit;
+    }
 
     // if (isStraightFlush(cards))
     //     return HAND_STRAIGHT_FLUSH;
@@ -77,7 +81,6 @@ Hand getHand(const Card cards[CARDS_PER_HAND]) {
     // if (isFullHouse(cards, &threeOfKindNumber, &pairNumber1))
     //     return HAND_FULL_HOUSE;
 
-    // char suit = ' ';
     // if (isFlush(cards, &suit))
     //     return HAND_FLUSH;
 
@@ -105,9 +108,9 @@ Hand getHand(const Card cards[CARDS_PER_HAND]) {
  */
 
 /** 05 cards of the same suit in row counting from 10 to Ace. */
-bool isRoyalStraightFlush(const Card cards[CARDS_PER_HAND]) {
+bool isRoyalStraightFlush(const Card cards[CARDS_PER_HAND], char &suit) {
     int firstNumber = cards[0].number;
-    return firstNumber == 10 && isSameSuitSequence(cards);
+    return firstNumber == 10 && isSameSuitSequence(cards, suit);
 }
 
 /**

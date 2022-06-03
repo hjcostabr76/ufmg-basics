@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdlib.h>
-#include "game.h"
+#include "types.h"
 
 using namespace std;
 
