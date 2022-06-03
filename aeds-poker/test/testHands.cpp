@@ -9,6 +9,7 @@ typedef struct {
     Card cards[CARDS_PER_HAND];
     Hand hand;
     bool isVerbose;
+    string title;
 } HandTest;
 
 /**
@@ -22,7 +23,9 @@ typedef struct {
  */
 bool testOneHand(const HandTest test) {
 
-    cout << endl << endl << "Testing cards:" << endl << dbgGetCardsPrint(test.cards, CARDS_PER_HAND);
+    cout << endl << endl << "Testing (" << test.title << "):" << endl;
+    if (test.isVerbose)
+        cout << dbgGetCardsPrint(test.cards, CARDS_PER_HAND);
     
     Hand hand = getHand(test.cards);
     bool isSuccess = (
@@ -109,11 +112,14 @@ void testRoyalStraightFlush(void) {
     HandTest validTests[nTests];
 
     char suit;
+    string title = "Must fit for all suits";
+    
     for (int i = 0; i < SUITS_COUNT; i++) {
         
         n++;
         suit = SUITS_LIST[i];
 
+        validTests[n].title = title;
         validTests[n].isVerbose = isVerbose;
         validTests[n].hand = getEmptyHand();
         validTests[n].hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
@@ -132,6 +138,7 @@ void testRoyalStraightFlush(void) {
     n++;
     suit = SUIT_CLUBS;
 
+    validTests[n].title = "Must fit for unordered sequences";
     validTests[n].isVerbose = isVerbose;
     validTests[n].hand = getEmptyHand();
     validTests[n].hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
@@ -147,6 +154,7 @@ void testRoyalStraightFlush(void) {
     n++;
     suit = SUIT_DIAMONDS;
 
+    validTests[n].title = "Must fit for unordered sequences";
     validTests[n].isVerbose = isVerbose;
     validTests[n].hand = getEmptyHand();
     validTests[n].hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
@@ -162,9 +170,57 @@ void testRoyalStraightFlush(void) {
 
     /** == INVALID Tests ====================== */
 
-    /**
-     * TODO: ...
-     */
+    n = -1;
+    nTests = 3;
+    isVerbose = false;
+    HandTest invalidTests[nTests];
+
+    // New Test
+    n++;
+    suit = SUIT_HEARTS;
+
+    invalidTests[n].title = "Mixed suits";
+    invalidTests[n].isVerbose = isVerbose;
+    invalidTests[n].hand = getEmptyHand();
+    invalidTests[n].hand.type = HAND_HIGHER_CARD;
+    
+    invalidTests[n].cards[0] = { SUIT_SPADES, 13 };
+    invalidTests[n].cards[1] = { suit, 10 };
+    invalidTests[n].cards[2] = { suit, 12 };
+    invalidTests[n].cards[3] = { suit, 1 };
+    invalidTests[n].cards[4] = { suit, 11 };
+
+    // New Test
+    n++;
+    suit = SUIT_DIAMONDS;
+
+    invalidTests[n].title = "Wrong sequence";
+    invalidTests[n].isVerbose = isVerbose;
+    invalidTests[n].hand = getEmptyHand();
+    invalidTests[n].hand.type = HAND_HIGHER_CARD;
+    
+    invalidTests[n].cards[0] = { suit, 9 };
+    invalidTests[n].cards[1] = { suit, 10 };
+    invalidTests[n].cards[2] = { suit, 11 };
+    invalidTests[n].cards[3] = { suit, 12 };
+    invalidTests[n].cards[4] = { suit, 13 };
+
+    // New Test
+    n++;
+    suit = SUIT_HEARTS;
+
+    invalidTests[n].title = "Wrong sequence";
+    invalidTests[n].isVerbose = isVerbose;
+    invalidTests[n].hand = getEmptyHand();
+    invalidTests[n].hand.type = HAND_HIGHER_CARD;
+    
+    invalidTests[n].cards[0] = { suit, 1 };
+    invalidTests[n].cards[1] = { suit, 2 };
+    invalidTests[n].cards[2] = { suit, 3 };
+    invalidTests[n].cards[3] = { suit, 4 };
+    invalidTests[n].cards[4] = { suit, 5 };
+
+    testManyHands("Royal Straight Flush", invalidTests, nTests, false);
 }
 
 int main() {
