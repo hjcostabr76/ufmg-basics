@@ -176,6 +176,10 @@ Hand getHand(const Card handCards[CARDS_PER_HAND]) {
     } else if (isFlush(cards, &suit)) {
         hand.type = HAND_FLUSH;
         hand.suit = suit;
+
+    } else if (isStraight(cards)) {
+        hand.type = HAND_STRAIGHT;
+        
     }
 
     // if (isStraight(cards))
@@ -264,6 +268,23 @@ bool isFlush(const Card cards[CARDS_PER_HAND], char *suit) {
     );
 
     return !isHigherHand && isSameSuit(cards, suit);
+}
+
+/**
+ * 05 cards in a row not caring about the suit.
+ * - In case of a tie, the one with highest card wins;
+ */
+bool isStraight(const Card cards[CARDS_PER_HAND]) {
+
+    bool isHigherHand = (
+        isRoyalStraightFlush(cards, NULL)
+        || isStraightFlush(cards, NULL)
+        || isFourOfKind(cards, NULL)
+        || isFullHouse(cards, NULL, NULL)
+        || isFlush(cards, NULL)
+    );
+
+    return !isHigherHand && isSequence(cards);
 }
 
 /**

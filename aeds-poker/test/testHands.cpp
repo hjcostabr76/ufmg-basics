@@ -188,10 +188,10 @@ TestResult testRoyalStraightFlush(void) {
     n++;
     suit = SUIT_HEARTS;
 
-    intests[n].title = "Mixed suits";
+    intests[n].title = "Must not match for mixed suits";
     intests[n].isVerbose = isVerbose;
     intests[n].hand = getEmptyHand();
-    intests[n].hand.type = HAND_HIGHER_CARD;
+    intests[n].hand.type = HAND_STRAIGHT;
     
     intests[n].cards[0] = { SUIT_SPADES, 13 };
     intests[n].cards[1] = { suit, 10 };
@@ -486,6 +486,60 @@ TestResult testFlush(void) {
     return testManyHands("Flush", tests, nTests);
 }
 
+/**
+ * 05 cards in a row not caring about the suit.
+ * - In case of a tie, the one with highest card wins;
+ */
+TestResult testStraight(void) {
+
+    int n = -1;
+    int nTests = 3;
+    bool isVerbose = false;
+    HandTest tests[nTests];
+
+    // New Test...
+    n++;
+    tests[n].title = "Must fit for unordered sequences";
+    tests[n].isVerbose = isVerbose;
+    tests[n].hand = getEmptyHand();
+    tests[n].hand.type = HAND_STRAIGHT;
+    
+    tests[n].cards[0] = { SUIT_HEARTS, 9 };
+    tests[n].cards[1] = { SUIT_HEARTS, 12 };
+    tests[n].cards[2] = { SUIT_HEARTS, 10 };
+    tests[n].cards[3] = { SUIT_CLUBS, 13 };
+    tests[n].cards[4] = { SUIT_HEARTS, 11 };
+
+    // New Test...
+    n++;
+    tests[n].title = "Must fit for unordered sequences";
+    tests[n].isVerbose = isVerbose;
+    tests[n].hand = getEmptyHand();
+    tests[n].hand.type = HAND_STRAIGHT;
+    
+    tests[n].cards[0] = { SUIT_HEARTS, 4 };
+    tests[n].cards[1] = { SUIT_HEARTS, 2 };
+    tests[n].cards[2] = { SUIT_HEARTS, 5 };
+    tests[n].cards[3] = { SUIT_CLUBS, 1 };
+    tests[n].cards[4] = { SUIT_HEARTS, 3 };
+
+    // New Test...
+    n++;
+    tests[n].title = "Must not apply for same suit sequence";
+    tests[n].isVerbose = isVerbose;
+    tests[n].hand = getEmptyHand();
+    tests[n].hand.type = HAND_STRAIGHT_FLUSH;
+    tests[n].hand.suit = SUIT_HEARTS;
+    
+    tests[n].cards[0] = { SUIT_HEARTS, 9 };
+    tests[n].cards[1] = { SUIT_HEARTS, 12 };
+    tests[n].cards[2] = { SUIT_HEARTS, 10 };
+    tests[n].cards[3] = { SUIT_HEARTS, 13 };
+    tests[n].cards[4] = { SUIT_HEARTS, 11 };
+
+    return testManyHands("Straight", tests, nTests);
+}
+
 int main() {
 
     // Notify tests start
@@ -521,6 +575,11 @@ int main() {
 
     nGroups++;
     aux = testFlush();
+    acc.nTests += aux.nTests;
+    acc.nFailures += aux.nFailures;
+
+    nGroups++;
+    aux = testStraight();
     acc.nTests += aux.nTests;
     acc.nFailures += aux.nFailures;
 

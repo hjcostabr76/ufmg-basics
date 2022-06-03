@@ -42,23 +42,6 @@ int getMatchedCountNumber(const int counts[CARDS_PER_SUIT], const int n) {
 
 
 /**
- * 05 cards in a row not caring about the suit.
- * - In case of a tie, the one with highest card wins;
- */
-// bool isStraight(const Card cards[CARDS_PER_HAND]) {
-
-//     bool isHigherHand = (
-//         isRoyalStraightFlush(cards)
-//         || isStraightFlush(cards)
-//         || isFourOfKind(cards, NULL)
-//         || isFullHouse(cards, NULL, NULL)
-//         || isFlush(cards, NULL)
-//     );
-
-//     return !isHigherHand && isSequence(cards);
-// }
-
-/**
  * 03 equal cards + 02 different ones.
  * - In case of a tie, the one with the highest 03 of a kind card wins;
  * - If it remains, the one with the highest card wins;
