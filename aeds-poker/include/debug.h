@@ -11,7 +11,7 @@ using namespace std;
  * =================================================
  */
 
-string dbgGetCardPrint(const Card card);
+string dbgGetCardsPrint(const Card* cards, const int nCards);
 string dbgGetPlayPrint(const Play play);
 string dbgGetRoundPrint(const Round round);
 string dbgGetGamePrint(const Game game);

@@ -3,16 +3,26 @@
 
 using namespace std;
 
-string dbgGetCardPrint(const Card card) {
-    string suit;
-    suit += card.suit;
-    return "[card] suit: '" + suit + "'; number: '" + to_string(card.number) + "';";
+string dbgGetCardsPrint(const Card* cards, const int nCards) {
+    
+    string print = "";
+    for (int i = 0; i < nCards; i++) {
+        
+        string suit;
+        suit += cards[i].suit;
+        print += "\t[card] suit: '" + suit + "'; number: '" + to_string(cards[i].number) + "';";
+        
+        if (i > 0)
+            print += "\n";
+    }
+    
+    return print;
 }
 
 string dbgGetPlayPrint(const Play play) {
     string print = "[play] bid: '" + to_string(play.bid) + "'; playerName: '" + play.playerName + "'; cards:";
-    for (int i = 0; i < CARDS_COUNT; i++)
-        print += "\n\t\t\t" + dbgGetCardPrint(play.cards[i]);
+    for (int i = 0; i < CARDS_PER_HAND; i++)
+        print += "\n\t\t" + dbgGetCardsPrint(&play.cards[i], 1);
     return print;    
 }
 

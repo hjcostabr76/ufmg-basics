@@ -3,66 +3,26 @@
 #include <stdlib.h>
 #include <fstream>
 
+#include "types.h"
+
 using namespace std;
 
-/**
- * =================================================
- * -- CONSTANT -------------------------------------
- * =================================================
- */
+/** -- Hand parsers --------------- */
 
-#define DEBUG_ENABLE true
+bool isRoyalStraightFlush(const Card cards[CARDS_PER_HAND]);
+// bool isStraightFlush(const Card cards[CARDS_PER_HAND]);
+// bool isFourOfKind(const Card cards[CARDS_PER_HAND], int *fourOfKindNumber);
+// bool isFullHouse(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber, int *pairNumber);
+// bool isFlush(const Card cards[CARDS_PER_HAND], char *suit);
+// bool isStraight(const Card cards[CARDS_PER_HAND]);
+// bool isThreeOfKind(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber);
+// bool isTwoPairs(const Card cards[CARDS_PER_HAND], int *pairNumber1, int *pairNumber2);
+// bool isOnePair(const Card cards[CARDS_PER_HAND], int &pairCard);
 
-#define SUITS_COUNT 4
-#define CARDS_COUNT 5
-#define CARDS_PER_SUIT 13
+Hand getEmptyHand(void);
+Hand getHand(const Card cards[CARDS_PER_HAND]);
 
-#define CARD_SUIT_CLUBS 'P'
-#define CARD_SUIT_SPADES 'E'
-#define CARD_SUIT_HEARTS 'C'
-#define CARD_SUIT_DIAMONDS 'O'
-
-/**
- * =================================================
- * -- ABSTRACT -------------------------------------
- * =================================================
- */
-
-typedef struct {
-    char suit;
-    int number;
-} Card;
-
-typedef struct {
-    int bid;
-    string playerName;
-    Card cards[CARDS_COUNT];
-} Play;
-
-typedef struct {
-    int money;
-    string name;
-    Play* plays;
-} Player;
-
-typedef struct {
-    int blind;
-    int nPlays;
-    Play* plays;
-} Round;
-
-typedef struct {
-    int nRounds;
-    int initialAmount;
-    Round* rounds;
-} Game;
-
-
-/**
- * =================================================
- * -- HEADERS --------------------------------------
- * =================================================
- */
+/** -- Input parsers -------------- */
 
 Play readPlay(ifstream &inputStream);
 Round readRound(ifstream &inputStream);
