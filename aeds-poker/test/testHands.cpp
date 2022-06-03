@@ -128,7 +128,7 @@ TestResult testRoyalStraightFlush(void) {
         string suitAux;
         suitAux += suit;
 
-        tests[n].title = "Must fit for suit" + suitAux;
+        tests[n].title = "Must fit for suit " + suitAux;
         tests[n].isVerbose = isVerbose;
         tests[n].hand = getEmptyHand();
         tests[n].hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
@@ -209,8 +209,6 @@ TestResult testRoyalStraightFlush(void) {
 /** 05 cards of the same suit in a row NOT counting from 10 to Ace (!= RSF). */
 TestResult testStraightFlush(void) {
 
-    /** == VALID ======================================== */
-
     int n = -1;
     int nTests = SUITS_COUNT + 9 + 2;
     bool isVerbose = false;
@@ -225,7 +223,7 @@ TestResult testStraightFlush(void) {
         string suitAux;
         suitAux += suit;
 
-        tests[n].title = "Must fit for suit" + suitAux;
+        tests[n].title = "Must fit for suit " + suitAux;
         tests[n].isVerbose = isVerbose;
         tests[n].hand = getEmptyHand();
         tests[n].hand.type = HAND_STRAIGHT_FLUSH;
@@ -297,8 +295,6 @@ TestResult testStraightFlush(void) {
 
 TestResult testFourOfKind(void) {
 
-    /** == VALID ======================================== */
-
     int n = -1;
     int nTests = SUITS_COUNT + CARD_NUM_KING + CARDS_PER_HAND;
     bool isVerbose = false;
@@ -316,7 +312,7 @@ TestResult testFourOfKind(void) {
         suitAux += suit;
         int fourOfKindNumber = i + 1;
 
-        tests[n].title = "Must fit for suit" + suitAux;
+        tests[n].title = "Must fit for suit " + suitAux;
         tests[n].isVerbose = isVerbose;
         tests[n].hand = getEmptyHand();
         tests[n].hand.type = HAND_4_KIND;
@@ -381,8 +377,6 @@ TestResult testFourOfKind(void) {
  */
 TestResult testFullHouse(void) {
 
-    /** == VALID ======================================== */
-
     int n = -1;
     int nTests = CARD_NUM_KING + 10;
     bool isVerbose = false;
@@ -442,6 +436,56 @@ TestResult testFullHouse(void) {
     return testManyHands("Full House", tests, nTests);
 }
 
+/**
+ * 05 cards of the same suit (without being in a row).
+ * - In case of a tie the one with the highest card wins;
+ */
+TestResult testFlush(void) {
+
+    int n = -1;
+    int nTests = SUITS_COUNT + 1;
+    bool isVerbose = false;
+    HandTest tests[nTests];
+
+    // Must fit for any suit
+    char suit;
+    for (int i = 0; i < SUITS_COUNT; i++) {
+        
+        n++;
+        suit = SUITS_LIST[i];
+
+        string suitAux;
+        suitAux += suit;
+
+        tests[n].title = "Must fit for suit " + suitAux;
+        tests[n].isVerbose = isVerbose;
+        tests[n].hand = getEmptyHand();
+        tests[n].hand.type = HAND_FLUSH;
+        tests[n].hand.suit = suit;
+        
+        tests[n].cards[0] = { suit, 1 };
+        tests[n].cards[1] = { suit, 6 };
+        tests[n].cards[2] = { suit, 5 };
+        tests[n].cards[3] = { suit, 4 };
+        tests[n].cards[4] = { suit, 9 };
+    }
+
+    // New test
+    n++;
+    tests[n].title = "Must fail for mixed suits";
+    tests[n].isVerbose = isVerbose;
+    tests[n].hand = getEmptyHand();
+    tests[n].hand.type = HAND_HIGHER_CARD;
+    
+    tests[n].cards[0] = { SUIT_DIAMONDS, 1 };
+    tests[n].cards[1] = { SUIT_DIAMONDS, 6 };
+    tests[n].cards[2] = { SUIT_DIAMONDS, 5 };
+    tests[n].cards[3] = { SUIT_DIAMONDS, 4 };
+    tests[n].cards[4] = { SUIT_CLUBS, 9 };
+
+    return testManyHands("Flush", tests, nTests);
+}
+
 int main() {
 
     // Notify tests start
@@ -472,6 +516,11 @@ int main() {
 
     nGroups++;
     aux = testFullHouse();
+    acc.nTests += aux.nTests;
+    acc.nFailures += aux.nFailures;
+
+    nGroups++;
+    aux = testFlush();
     acc.nTests += aux.nTests;
     acc.nFailures += aux.nFailures;
 

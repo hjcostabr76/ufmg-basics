@@ -42,33 +42,6 @@ int getMatchedCountNumber(const int counts[CARDS_PER_SUIT], const int n) {
 
 
 /**
- * 05 cards of the same suit (without being in a row).
- * - In case of a tie the one with the highest card wins;
- */
-// bool isFlush(const Card cards[CARDS_PER_HAND], char *suit) {
-
-//     bool isHigherHand = (
-//         isRoyalStraightFlush(cards)
-//         || isStraightFlush(cards)
-//         || isFourOfKind(cards, NULL)
-//         || isFullHouse(cards, NULL, NULL)
-//     );
-
-//     if (isHigherHand)
-//         return false;
-
-//     if (suit == NULL)
-//         suit = (char*)malloc(sizeof(char));
-//     *suit = cards[0].suit;
-
-//     for (int i = 1; i < CARDS_PER_HAND; i++) {
-//         if (cards[i].suit != *suit)
-//             return false;
-//     }
-//     return true;
-// }
-
-/**
  * 05 cards in a row not caring about the suit.
  * - In case of a tie, the one with highest card wins;
  */
