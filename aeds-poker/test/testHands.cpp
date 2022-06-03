@@ -320,7 +320,6 @@ TestResult testFourOfKind(void) {
         tests[n].isVerbose = isVerbose;
         tests[n].hand = getEmptyHand();
         tests[n].hand.type = HAND_4_KIND;
-        tests[n].hand.suit = suit;
         tests[n].hand.fourOfKindNumber = fourOfKindNumber;
         
         tests[n].cards[0] = { suit, fourOfKindNumber };
@@ -341,7 +340,6 @@ TestResult testFourOfKind(void) {
         tests[n].isVerbose = isVerbose;
         tests[n].hand = getEmptyHand();
         tests[n].hand.type = HAND_4_KIND;
-        tests[n].hand.suit = suit;
         tests[n].hand.fourOfKindNumber = fourOfKindNumber;
 
         tests[n].cards[0] = { suit, fourOfKindNumber };
@@ -363,7 +361,6 @@ TestResult testFourOfKind(void) {
         tests[n].isVerbose = isVerbose;
         tests[n].hand = getEmptyHand();
         tests[n].hand.type = HAND_4_KIND;
-        tests[n].hand.suit = suit;
         tests[n].hand.fourOfKindNumber = fourOfKindNumber;
 
         for (int j = 0; j < CARDS_PER_HAND; j++)

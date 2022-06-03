@@ -96,6 +96,9 @@ void countCards(const Card cards[CARDS_PER_HAND], int counts[CARDS_PER_SUIT]) {
         counts[cards[i].number - 1]++;
 }
 
+/**
+ * TODO: 2022-06-03 - Check if we really need the suit
+ */
 bool hasNOfAKind(const int n, const Card cards[CARDS_PER_HAND], int *matchedNumber, char *matchedSuit, int counts[CARDS_PER_SUIT]) {
 
     // Set each number occurrences count
@@ -164,9 +167,8 @@ Hand getHand(const Card handCards[CARDS_PER_HAND]) {
         hand.type = HAND_STRAIGHT_FLUSH;
         hand.suit = suit;
 
-    } if (isFourOfKind(cards, &fourOfKindNumber, &suit)) {
+    } if (isFourOfKind(cards, &fourOfKindNumber)) {
         hand.type =  HAND_4_KIND;
-        hand.suit =  suit;
         hand.fourOfKindNumber =  fourOfKindNumber;
 
     } if (isFullHouse(cards, &threeOfKindNumber, &pairNumber)) {
@@ -218,9 +220,9 @@ bool isStraightFlush(const Card cards[CARDS_PER_HAND], char *suit) {
  * - In case of a tie the higher number hand wins;
  * - If it remains tied the one with the higher fifth card wins;
  */
-bool isFourOfKind(const Card cards[CARDS_PER_HAND], int *fourOfKindNumber, char *suit) {
+bool isFourOfKind(const Card cards[CARDS_PER_HAND], int *fourOfKindNumber) {
     bool isHigherHand = isRoyalStraightFlush(cards, NULL) || isStraightFlush(cards, NULL);
-    return !isHigherHand && hasNOfAKind(4, cards, fourOfKindNumber, suit, NULL);
+    return !isHigherHand && hasNOfAKind(4, cards, fourOfKindNumber, NULL, NULL);
 }
 
 /**
@@ -233,7 +235,7 @@ bool isFullHouse(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber, int *
     *threeOfKindNumber = 0;
     *pairNumber = 0;
 
-    bool isHigherHand = isRoyalStraightFlush(cards, NULL) || isStraightFlush(cards, NULL) || isFourOfKind(cards, NULL, NULL);
+    bool isHigherHand = isRoyalStraightFlush(cards, NULL) || isStraightFlush(cards, NULL) || isFourOfKind(cards, NULL);
     if (isHigherHand)
         return false;
 
