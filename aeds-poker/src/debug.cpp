@@ -41,6 +41,15 @@ string dbgGetGamePrint(const Game game) {
     return print;
 }
 
+void dbgPrintCards(const Card* cards, const int nCards) {
+    if (DEBUG_ENABLE) {
+        cout << "---------- DBG: Cards ---------" << endl;
+        cout << dbgGetCardsPrint(cards, nCards);
+        cout << endl;
+        cout << "---------- || --- || ----------" << endl;
+    }
+}
+
 void dbgPrintGame(const Game game) {
     if (DEBUG_ENABLE) {
         cout << "---------- DBG: Game ----------" << endl;

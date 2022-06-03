@@ -14,6 +14,8 @@ using namespace std;
 
 #define CARDS_PER_HAND 5
 #define CARDS_PER_SUIT 13
+#define CARD_NUM_ACE 1
+#define CARD_NUM_KING 13
 
 #define SUITS_COUNT 4
 #define SUIT_CLUBS 'P'

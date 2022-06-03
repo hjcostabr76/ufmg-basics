@@ -1,3 +1,4 @@
+#include <string.h>
 #include <iostream>
 
 #include "../include/types.h"
@@ -100,17 +101,18 @@ bool testManyHands(const string title, HandTest tests[], const int nTests, const
 /** 05 cards of the same suit in row counting from 10 to Aces. */
 void testRoyalStraightFlush(void) {
 
-    /** == VALID Tests ======================== */
+    /** == VALID: Must fit for all suits ================ */
 
     int n = -1;
-    int nTests = SUITS_COUNT;
-    bool isVerbose = true;
+    int nTests = SUITS_COUNT + 2;
+    bool isVerbose = false;
     HandTest validTests[nTests];
 
+    char suit;
     for (int i = 0; i < SUITS_COUNT; i++) {
         
         n++;
-        char suit = SUITS_LIST[i];
+        suit = SUITS_LIST[i];
 
         validTests[n].isVerbose = isVerbose;
         validTests[n].hand = getEmptyHand();
@@ -124,7 +126,45 @@ void testRoyalStraightFlush(void) {
         validTests[n].cards[4] = { suit, 1 };
     }
 
+    /** == VALID: Must fit for unordered sequences ====== */
+    
+    // New Test...
+    n++;
+    suit = SUIT_CLUBS;
+
+    validTests[n].isVerbose = isVerbose;
+    validTests[n].hand = getEmptyHand();
+    validTests[n].hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
+    validTests[n].hand.suit = suit;
+    
+    validTests[n].cards[0] = { suit, 1 };
+    validTests[n].cards[1] = { suit, 13 };
+    validTests[n].cards[2] = { suit, 12 };
+    validTests[n].cards[3] = { suit, 11 };
+    validTests[n].cards[4] = { suit, 10 };
+
+    // New Test...
+    n++;
+    suit = SUIT_DIAMONDS;
+
+    validTests[n].isVerbose = isVerbose;
+    validTests[n].hand = getEmptyHand();
+    validTests[n].hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
+    validTests[n].hand.suit = suit;
+    
+    validTests[n].cards[0] = { suit, 13 };
+    validTests[n].cards[1] = { suit, 10 };
+    validTests[n].cards[2] = { suit, 12 };
+    validTests[n].cards[3] = { suit, 1 };
+    validTests[n].cards[4] = { suit, 11 };
+
     testManyHands("Royal Straight Flush", validTests, nTests, true);
+
+    /** == INVALID Tests ====================== */
+
+    /**
+     * TODO: ...
+     */
 }
 
 int main() {

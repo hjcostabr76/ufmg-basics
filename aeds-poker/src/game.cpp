@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <memory>
 #include <sstream>
 
@@ -19,8 +20,8 @@ bool isSequence(const Card cards[CARDS_PER_HAND]) {
         int currentNumber = cards[i].number;
         
         bool isValidNumber = (
-            (prevNumber != 13 && currentNumber == (prevNumber + 1))
-            || (prevNumber == 13 && currentNumber == 1) // Considers the ace as the last card
+            (prevNumber != CARD_NUM_KING && currentNumber == (prevNumber + 1))
+            || (prevNumber == CARD_NUM_KING && currentNumber == CARD_NUM_ACE) // Considers the ace as the last card
         );
         
         if (!isValidNumber)
@@ -44,6 +45,38 @@ bool isSameSuitSequence(const Card cards[CARDS_PER_HAND], char &suit) {
     return true;
 }
 
+void sortCards(Card cards[CARDS_PER_HAND]) {
+    
+    // Do the regular sort
+    for (int i = 0; i < CARDS_PER_HAND; i++) {
+        for (int j = 1; j < CARDS_PER_HAND; j++) {
+            Card prev = cards[j - 1];
+            Card current = cards[j];
+            if (current.number < prev.number) {
+                cards[j - 1] = current;
+                cards[j] = prev;
+            }
+        }
+    }
+
+    // Handle ace conditional position
+    int lastIdx = CARDS_PER_HAND - 1;
+    bool isAceSpecialCase = cards[lastIdx].number == CARD_NUM_KING && cards[0].number == CARD_NUM_ACE;
+    if (!isAceSpecialCase)
+        return;
+
+    Card ace = cards[0];
+
+    for (int i = 1; i < CARDS_PER_HAND; i++) {
+        Card prev = cards[i - 1];
+        Card current = cards[i];
+        cards[i - 1] = current;
+        cards[i] = prev;
+    }
+
+    cards[lastIdx] = ace;
+}
+
 int getHandScore(const Hand hand) {
     return (
         hand.type
@@ -59,8 +92,14 @@ Hand getEmptyHand(void) {
     return { HAND_HIGHER_CARD, ' ', 0, 0, 0, 0, 0, 0 };
 }
 
-Hand getHand(const Card cards[CARDS_PER_HAND]) {
+Hand getHand(const Card handCards[CARDS_PER_HAND]) {
 
+    // Make a sorted copy of provided cards
+    Card cards[CARDS_PER_HAND];
+    memcpy(cards, handCards, CARDS_PER_HAND * sizeof(Card));
+    sortCards(cards);
+
+    // Detect hand
     Hand hand = getEmptyHand();
 
     char suit;

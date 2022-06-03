@@ -16,6 +16,7 @@ string dbgGetPlayPrint(const Play play);
 string dbgGetRoundPrint(const Round round);
 string dbgGetGamePrint(const Game game);
 
+void dbgPrintCards(const Card* cards, const int nCards);
 void dbgPrintGame(const Game game);
 void dbgPrintRound(const Round round);
 void dbgPrintPLay(const Play play);

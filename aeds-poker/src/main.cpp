@@ -8,7 +8,7 @@
 using namespace std;
 
 bool isValidCardNumber(const int number) {
-    return number >= 1 && number <= 13;
+    return number >= CARD_NUM_ACE && number <= CARD_NUM_KING;
 }
 
 /**
