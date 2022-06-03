@@ -13,10 +13,13 @@ using namespace std;
 
 #define DEBUG_ENABLE true
 
+#define SUITS_COUNT 4
 #define CARDS_COUNT 5
+#define CARDS_PER_SUIT 13
+
+#define CARD_SUIT_CLUBS 'P'
 #define CARD_SUIT_SPADES 'E'
 #define CARD_SUIT_HEARTS 'C'
-#define CARD_SUIT_CLUBS 'P'
 #define CARD_SUIT_DIAMONDS 'O'
 
 /**
