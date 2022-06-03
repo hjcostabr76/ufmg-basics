@@ -108,8 +108,10 @@ Hand getHand(const Card handCards[CARDS_PER_HAND]) {
         hand.suit = suit;
     }
 
-    // if (isStraightFlush(cards))
-    //     return HAND_STRAIGHT_FLUSH;
+    if (isStraightFlush(cards, suit)) {
+        hand.type = HAND_STRAIGHT_FLUSH;
+        hand.suit = suit;
+    }
 
     // int fourOfKindNumber = 0;
     // if (isFourOfKind(cards, &fourOfKindNumber))
@@ -150,6 +152,12 @@ Hand getHand(const Card handCards[CARDS_PER_HAND]) {
 bool isRoyalStraightFlush(const Card cards[CARDS_PER_HAND], char &suit) {
     int firstNumber = cards[0].number;
     return firstNumber == 10 && isSameSuitSequence(cards, suit);
+}
+
+/** 05 cards of the same suit in a row NOT counting from 10 to Ace (!= RSF). */
+bool isStraightFlush(const Card cards[CARDS_PER_HAND], char &suit) {
+    int firstNumber = cards[0].number;
+    return firstNumber < 10 && isSameSuitSequence(cards, suit); // 1st number >= 10 would be RSF or nothing at all
 }
 
 /**

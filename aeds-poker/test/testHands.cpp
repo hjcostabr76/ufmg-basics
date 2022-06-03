@@ -112,14 +112,13 @@ void testRoyalStraightFlush(void) {
     HandTest validTests[nTests];
 
     char suit;
-    string title = "Must fit for all suits";
     
     for (int i = 0; i < SUITS_COUNT; i++) {
         
         n++;
         suit = SUITS_LIST[i];
 
-        validTests[n].title = title;
+        validTests[n].title = "Must fit for all suits";
         validTests[n].isVerbose = isVerbose;
         validTests[n].hand = getEmptyHand();
         validTests[n].hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
@@ -223,6 +222,93 @@ void testRoyalStraightFlush(void) {
     testManyHands("Royal Straight Flush", invalidTests, nTests, false);
 }
 
+/** 05 cards of the same suit in a row NOT counting from 10 to Ace (!= RSF). */
+void testStraightFlush(void) {
+
+    /** == VALID ======================================== */
+
+    int n = -1;
+    int nTests = SUITS_COUNT + 9 + 2;
+    bool isVerbose = false;
+    HandTest validTests[nTests];
+
+    char suit;
+    for (int i = 0; i < SUITS_COUNT; i++) {
+        
+        n++;
+        suit = SUITS_LIST[i];
+
+        validTests[n].title = "Must fit for all suits";
+        validTests[n].isVerbose = isVerbose;
+        validTests[n].hand = getEmptyHand();
+        validTests[n].hand.type = HAND_STRAIGHT_FLUSH;
+        validTests[n].hand.suit = suit;
+        
+        validTests[n].cards[0] = { suit, 9 };
+        validTests[n].cards[1] = { suit, 10 };
+        validTests[n].cards[2] = { suit, 11 };
+        validTests[n].cards[3] = { suit, 12 };
+        validTests[n].cards[4] = { suit, 13 };
+    }
+
+
+    /** == VALID: Must fit for all valid sequences ====== */
+    
+    // New Test...
+    suit = SUIT_CLUBS;
+
+    for (int i = 1; i < 10; i++) {
+
+        n++;
+        validTests[n].title = "Must fit for sequence starting from " + to_string(i);
+        validTests[n].isVerbose = isVerbose;
+        validTests[n].hand = getEmptyHand();
+        validTests[n].hand.type = HAND_STRAIGHT_FLUSH;
+        validTests[n].hand.suit = suit;
+
+        for (int j = 0; j < CARDS_PER_HAND; j++)
+            validTests[n].cards[j] = { suit, i + j };
+    }
+
+
+    /** == VALID: Must fit for unordered sequences ====== */
+    
+    // New Test...
+    n++;
+    suit = SUIT_HEARTS;
+
+    validTests[n].title = "Must fit for unordered sequences";
+    validTests[n].isVerbose = isVerbose;
+    validTests[n].hand = getEmptyHand();
+    validTests[n].hand.type = HAND_STRAIGHT_FLUSH;
+    validTests[n].hand.suit = suit;
+    
+    validTests[n].cards[0] = { suit, 9 };
+    validTests[n].cards[1] = { suit, 12 };
+    validTests[n].cards[2] = { suit, 10 };
+    validTests[n].cards[3] = { suit, 13 };
+    validTests[n].cards[4] = { suit, 11 };
+
+    // New Test...
+    n++;
+    suit = SUIT_DIAMONDS;
+
+    validTests[n].title = "Must fit for unordered sequences";
+    validTests[n].isVerbose = isVerbose;
+    validTests[n].hand = getEmptyHand();
+    validTests[n].hand.type = HAND_STRAIGHT_FLUSH;
+    validTests[n].hand.suit = suit;
+    
+    validTests[n].cards[0] = { suit, 3 };
+    validTests[n].cards[1] = { suit, 7 };
+    validTests[n].cards[2] = { suit, 5 };
+    validTests[n].cards[3] = { suit, 4 };
+    validTests[n].cards[4] = { suit, 6 };
+
+    testManyHands("Straight Flush", validTests, nTests, true);
+}
+
 int main() {
-    testRoyalStraightFlush();
+    // testRoyalStraightFlush();
+    testStraightFlush();
 }

@@ -74,11 +74,6 @@ Card* getCardsWithoutN(const Card cards[CARDS_PER_HAND], const int n) {
 
 
 
-/** 05 cards of the same suit in a row NOT counting from 10 to Ace (!= RSF). */
-// bool isStraightFlush(const Card cards[CARDS_PER_HAND]) {
-//     int firstNumber = cards[0].number;
-//     return firstNumber < 10 && isSameSuitSequence(cards); // 1st number >= 10 would be RSF or nothing at all
-// }
 
 /**
  * 04 equal cards.
