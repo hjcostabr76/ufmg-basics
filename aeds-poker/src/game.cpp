@@ -31,14 +31,17 @@ bool isSequence(const Card cards[CARDS_PER_HAND]) {
     return true;
 }
 
-bool isSameSuitSequence(const Card cards[CARDS_PER_HAND], char &suit) {
+bool isSameSuitSequence(const Card cards[CARDS_PER_HAND], char *suit) {
 
     if (!isSequence(cards))
         return false;
 
-    suit = cards[0].suit;
+    if (suit == NULL)
+        suit = (char*)malloc(sizeof(char));
+    
+    *suit = cards[0].suit;
     for (int i = 1; i < CARDS_PER_HAND; i++) {
-        if (cards[i].suit != suit)
+        if (cards[i].suit != *suit)
             return false;
     }
 
@@ -88,6 +91,40 @@ int getHandScore(const Hand hand) {
     );
 }
 
+void countCards(const Card cards[CARDS_PER_HAND], int counts[CARDS_PER_SUIT]) {
+    for (int i = 0; i < CARDS_PER_HAND; i++)
+        counts[cards[i].number - 1]++;
+}
+
+bool hasNOfAKind(const int n, const Card cards[CARDS_PER_HAND], int *matchedNumber, char *matchedSuit, int counts[CARDS_PER_SUIT]) {
+
+    // Set each number occurrences count
+    if (counts == NULL)
+        counts = (int*)malloc(CARDS_PER_SUIT * sizeof(int));
+    countCards(cards, counts);
+
+    // Check if we have the exact counting we're looking for
+    if (matchedNumber == NULL)
+        matchedNumber = (int*)malloc(sizeof(int));
+    *matchedNumber = 0;
+    
+    if (matchedSuit == NULL)
+        matchedSuit = (char*)malloc(sizeof(char));
+    *matchedSuit = ' ';
+    
+    int bestCount = 0;
+    for (int i = 0; i < CARDS_PER_HAND; i++) {
+        int thisCount = counts[cards[i].number - 1];
+        if (thisCount > bestCount) {
+            bestCount = thisCount;
+            *matchedSuit = cards[i].suit;
+            *matchedNumber = cards[i].number;
+        }
+    }
+
+    return bestCount == n;
+}
+
 Hand getEmptyHand(void) {
     return { HAND_HIGHER_CARD, ' ', 0, 0, 0, 0, 0, 0 };
 }
@@ -103,19 +140,22 @@ Hand getHand(const Card handCards[CARDS_PER_HAND]) {
     Hand hand = getEmptyHand();
 
     char suit;
-    if (isRoyalStraightFlush(cards, suit)) {
+    if (isRoyalStraightFlush(cards, &suit)) {
         hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
         hand.suit = suit;
     }
 
-    if (isStraightFlush(cards, suit)) {
+    if (isStraightFlush(cards, &suit)) {
         hand.type = HAND_STRAIGHT_FLUSH;
         hand.suit = suit;
     }
 
-    // int fourOfKindNumber = 0;
-    // if (isFourOfKind(cards, &fourOfKindNumber))
-    //     return HAND_4_KIND;
+    int fourOfKindNumber = 0;
+    if (isFourOfKind(cards, &fourOfKindNumber, &suit)) {
+        hand.type =  HAND_4_KIND;
+        hand.suit =  suit;
+        hand.fourOfKindNumber =  fourOfKindNumber;
+    }
 
     // int threeOfKindNumber = 0;
     // int pairNumber1 = 0;
@@ -149,15 +189,25 @@ Hand getHand(const Card handCards[CARDS_PER_HAND]) {
  */
 
 /** 05 cards of the same suit in row counting from 10 to Ace. */
-bool isRoyalStraightFlush(const Card cards[CARDS_PER_HAND], char &suit) {
+bool isRoyalStraightFlush(const Card cards[CARDS_PER_HAND], char *suit) {
     int firstNumber = cards[0].number;
     return firstNumber == 10 && isSameSuitSequence(cards, suit);
 }
 
 /** 05 cards of the same suit in a row NOT counting from 10 to Ace (!= RSF). */
-bool isStraightFlush(const Card cards[CARDS_PER_HAND], char &suit) {
+bool isStraightFlush(const Card cards[CARDS_PER_HAND], char *suit) {
     int firstNumber = cards[0].number;
     return firstNumber < 10 && isSameSuitSequence(cards, suit); // 1st number >= 10 would be RSF or nothing at all
+}
+
+/**
+ * 04 equal cards.
+ * - In case of a tie the higher number hand wins;
+ * - If it remains tied the one with the higher fifth card wins;
+ */
+bool isFourOfKind(const Card cards[CARDS_PER_HAND], int *fourOfKindNumber, char *suit) {
+    bool isHigherHand = isRoyalStraightFlush(cards, NULL) || isStraightFlush(cards, NULL);
+    return !isHigherHand && hasNOfAKind(4, cards, fourOfKindNumber, suit, NULL);
 }
 
 /**

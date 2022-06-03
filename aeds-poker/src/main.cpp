@@ -23,34 +23,7 @@ bool isValidSuit(const char suit) {
     return false;
 }
 
-void countCards(const Card cards[CARDS_PER_HAND], int counts[CARDS_PER_SUIT]) {
-    for (int i = 0; i < CARDS_PER_HAND; i++)
-        counts[cards[i].number - 1]++;
-}
 
-bool hasNOfAKind(const int n, const Card cards[CARDS_PER_HAND], int *matchedNumber, int counts[CARDS_PER_SUIT]) {
-
-    // Set each number occurrences count
-    if (counts == NULL)
-        counts = (int*)malloc(CARDS_PER_SUIT * sizeof(int));
-    countCards(cards, counts);
-
-    // Check if we have the exact counting we're looking for
-    if (matchedNumber == NULL)
-        matchedNumber = (int*)malloc(sizeof(int));
-    *matchedNumber = 0;
-
-    int bestCount = 0;
-    for (int i = 0; i < CARDS_PER_HAND; i++) {
-        int thisCount = counts[cards[i].number - 1];
-        if (thisCount > bestCount) {
-            bestCount = thisCount;
-            *matchedNumber = cards[i].number;
-        }
-    }
-
-    return bestCount == n;
-}
 
 int getMatchedCountNumber(const int counts[CARDS_PER_SUIT], const int n) {
     for (int i = 0; i < CARDS_PER_SUIT; i++) {
@@ -74,16 +47,6 @@ Card* getCardsWithoutN(const Card cards[CARDS_PER_HAND], const int n) {
 
 
 
-
-/**
- * 04 equal cards.
- * - In case of a tie the higher number hand wins;
- * - If it remains tied the one with the higher fifth card wins;
- */
-// bool isFourOfKind(const Card cards[CARDS_PER_HAND], int *fourOfKindNumber) {
-//     bool isHigherHand = isRoyalStraightFlush(cards) || isStraightFlush(cards);
-//     return !isHigherHand && hasNOfAKind(4, cards, fourOfKindNumber, NULL);
-// }
 
 /**
  * 01 pair + 03 of a kind.

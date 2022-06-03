@@ -9,9 +9,9 @@ using namespace std;
 
 /** -- Hand parsers --------------- */
 
-bool isRoyalStraightFlush(const Card cards[CARDS_PER_HAND], char &suit);
-bool isStraightFlush(const Card cards[CARDS_PER_HAND], char &suit);
-// bool isFourOfKind(const Card cards[CARDS_PER_HAND], int *fourOfKindNumber);
+bool isRoyalStraightFlush(const Card cards[CARDS_PER_HAND], char *suit);
+bool isStraightFlush(const Card cards[CARDS_PER_HAND], char *suit);
+bool isFourOfKind(const Card cards[CARDS_PER_HAND], int *fourOfKindNumber, char *suit);
 // bool isFullHouse(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber, int *pairNumber);
 // bool isFlush(const Card cards[CARDS_PER_HAND], char *suit);
 // bool isStraight(const Card cards[CARDS_PER_HAND]);
