@@ -33,44 +33,13 @@ int getMatchedCountNumber(const int counts[CARDS_PER_SUIT], const int n) {
     return 0;
 }
 
-/** Returns a copy of a hand removing specific number 'n' (in case it's in the hand). */
-Card* getCardsWithoutN(const Card cards[CARDS_PER_HAND], const int n) {
-    Card cardsCopy[CARDS_PER_HAND] = { 0 };
-    for (int i = 0; i < CARDS_PER_SUIT; i++) {
-        cardsCopy[i] = cards[i];
-        if (cardsCopy[i].number == n)
-            cardsCopy[i].number = 0;
-    }
-    return cardsCopy;
-}
 
 
 
 
 
-/**
- * 01 pair + 03 of a kind.
- * - In case of a tie, the higher 03 of a kind wins;
- * - If it remains tied, the higher pair wins;
- */
-// bool isFullHouse(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber, int *pairNumber) {
 
-//     threeOfKindNumber = 0;
-//     pairNumber = 0;
 
-//     bool isHigherHand = isRoyalStraightFlush(cards) || isStraightFlush(cards) || isFourOfKind(cards, NULL);
-//     if (isHigherHand)
-//         return false;
-
-//     // Check the 03 of a kind part
-//     int counts[CARDS_PER_SUIT] = { 0 };
-//     if (!hasNOfAKind(3, cards, threeOfKindNumber, counts))
-//         return false;
-
-//     // Check the pair part
-//     Card* cardsCopy = getCardsWithoutN(cards, *threeOfKindNumber);
-//     return hasNOfAKind(2, cardsCopy, pairNumber, NULL);
-// }
 
 /**
  * 05 cards of the same suit (without being in a row).
@@ -145,7 +114,7 @@ Card* getCardsWithoutN(const Card cards[CARDS_PER_HAND], const int n) {
  * - If it remains, the one with the highest lowest pair card wins;
  * - If it remains, the one with the highest card wins;
  */
-// bool isTwoPairs(const Card cards[CARDS_PER_HAND], int *pairNumber1, int *pairNumber2) {
+// bool isTwoPairs(const Card cards[CARDS_PER_HAND], int *pairNumber, int *pairNumber2) {
     
 //     bool isHigherHand = (
 //         isRoyalStraightFlush(cards)
@@ -162,11 +131,11 @@ Card* getCardsWithoutN(const Card cards[CARDS_PER_HAND], const int n) {
 
 //     // Check if we have any pairs
 //     int counts[CARDS_PER_SUIT] = { 0 };
-//     if (!hasNOfAKind(2, cards, pairNumber1, counts))
+//     if (!hasNOfAKind(2, cards, pairNumber, counts))
 //         return false;
     
 //     // Check if we have a 2nd pair
-//     Card* cardsCopy = getCardsWithoutN(cards, *pairNumber1);
+//     Card* cardsCopy = removeCardFromHand(cards, *pairNumber);
 //     return hasNOfAKind(2, cardsCopy, pairNumber2, NULL);
 // }
 

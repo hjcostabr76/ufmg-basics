@@ -5,6 +5,8 @@
 #include "../include/game.h"
 #include "../include/debug.h"
 
+using namespace std;
+
 typedef struct {
     Card cards[CARDS_PER_HAND];
     Hand hand;
@@ -36,7 +38,7 @@ bool testOneHand(const HandTest test) {
         && hand.type == test.hand.type
         && hand.fourOfKindNumber == test.hand.fourOfKindNumber
         && hand.threeOfKindNumber == test.hand.threeOfKindNumber
-        && hand.pairNumber1 == test.hand.pairNumber1
+        && hand.pairNumber == test.hand.pairNumber
         && hand.pairNumber2 == test.hand.pairNumber2
         && hand.highest == test.hand.highest
         // && hand.score == test.hand.score
@@ -54,7 +56,7 @@ bool testOneHand(const HandTest test) {
         cout << "\thand.type: '" << to_string(hand.type) << "'" << endl;
         cout << "\thand.fourOfKindNumber: '" << to_string(hand.fourOfKindNumber) << "'" << endl;
         cout << "\thand.threeOfKindNumber: '" << to_string(hand.threeOfKindNumber) << "'" << endl;
-        cout << "\thand.pairNumber1: '" << to_string(hand.pairNumber1) << "'" << endl;
+        cout << "\thand.pairNumber: '" << to_string(hand.pairNumber) << "'" << endl;
         cout << "\thand.pairNumber2: '" << to_string(hand.pairNumber2) << "'" << endl;
         cout << "\thand.highest: '" << to_string(hand.highest) << "'" << endl;
         
@@ -65,7 +67,7 @@ bool testOneHand(const HandTest test) {
         cout << "\thand.type: '" << to_string(test.hand.type) << "'" << endl;
         cout << "\thand.fourOfKindNumber: '" << to_string(test.hand.fourOfKindNumber) << "'" << endl;
         cout << "\thand.threeOfKindNumber: '" << to_string(test.hand.threeOfKindNumber) << "'" << endl;
-        cout << "\thand.pairNumber1: '" << to_string(test.hand.pairNumber1) << "'" << endl;
+        cout << "\thand.pairNumber: '" << to_string(test.hand.pairNumber) << "'" << endl;
         cout << "\thand.pairNumber2: '" << to_string(test.hand.pairNumber2) << "'" << endl;
         cout << "\thand.highest: '" << to_string(test.hand.highest) << "'" << endl;
     }
@@ -114,7 +116,7 @@ TestResult testRoyalStraightFlush(void) {
     int n = -1;
     int nTests = SUITS_COUNT + 2;
     bool isVerbose = false;
-    HandTest validTests[nTests];
+    HandTest tests[nTests];
 
     char suit;
     
@@ -126,17 +128,17 @@ TestResult testRoyalStraightFlush(void) {
         string suitAux;
         suitAux += suit;
 
-        validTests[n].title = "Must fit for suit" + suitAux;
-        validTests[n].isVerbose = isVerbose;
-        validTests[n].hand = getEmptyHand();
-        validTests[n].hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
-        validTests[n].hand.suit = suit;
+        tests[n].title = "Must fit for suit" + suitAux;
+        tests[n].isVerbose = isVerbose;
+        tests[n].hand = getEmptyHand();
+        tests[n].hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
+        tests[n].hand.suit = suit;
         
-        validTests[n].cards[0] = { suit, 10 }; 
-        validTests[n].cards[1] = { suit, 11 }; 
-        validTests[n].cards[2] = { suit, 12 }; 
-        validTests[n].cards[3] = { suit, 13 }; 
-        validTests[n].cards[4] = { suit, 1 };
+        tests[n].cards[0] = { suit, 10 }; 
+        tests[n].cards[1] = { suit, 11 }; 
+        tests[n].cards[2] = { suit, 12 }; 
+        tests[n].cards[3] = { suit, 13 }; 
+        tests[n].cards[4] = { suit, 1 };
     }
 
     /** == VALID: Must fit for unordered sequences ====== */
@@ -145,59 +147,59 @@ TestResult testRoyalStraightFlush(void) {
     n++;
     suit = SUIT_CLUBS;
 
-    validTests[n].title = "Must fit for unordered sequences";
-    validTests[n].isVerbose = isVerbose;
-    validTests[n].hand = getEmptyHand();
-    validTests[n].hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
-    validTests[n].hand.suit = suit;
+    tests[n].title = "Must fit for unordered sequences";
+    tests[n].isVerbose = isVerbose;
+    tests[n].hand = getEmptyHand();
+    tests[n].hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
+    tests[n].hand.suit = suit;
     
-    validTests[n].cards[0] = { suit, 1 };
-    validTests[n].cards[1] = { suit, 13 };
-    validTests[n].cards[2] = { suit, 12 };
-    validTests[n].cards[3] = { suit, 11 };
-    validTests[n].cards[4] = { suit, 10 };
+    tests[n].cards[0] = { suit, 1 };
+    tests[n].cards[1] = { suit, 13 };
+    tests[n].cards[2] = { suit, 12 };
+    tests[n].cards[3] = { suit, 11 };
+    tests[n].cards[4] = { suit, 10 };
 
     // New Test...
     n++;
     suit = SUIT_DIAMONDS;
 
-    validTests[n].title = "Must fit for unordered sequences";
-    validTests[n].isVerbose = isVerbose;
-    validTests[n].hand = getEmptyHand();
-    validTests[n].hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
-    validTests[n].hand.suit = suit;
+    tests[n].title = "Must fit for unordered sequences";
+    tests[n].isVerbose = isVerbose;
+    tests[n].hand = getEmptyHand();
+    tests[n].hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
+    tests[n].hand.suit = suit;
     
-    validTests[n].cards[0] = { suit, 13 };
-    validTests[n].cards[1] = { suit, 10 };
-    validTests[n].cards[2] = { suit, 12 };
-    validTests[n].cards[3] = { suit, 1 };
-    validTests[n].cards[4] = { suit, 11 };
+    tests[n].cards[0] = { suit, 13 };
+    tests[n].cards[1] = { suit, 10 };
+    tests[n].cards[2] = { suit, 12 };
+    tests[n].cards[3] = { suit, 1 };
+    tests[n].cards[4] = { suit, 11 };
 
-    result = testManyHands("Royal Straight Flush", validTests, nTests);
+    result = testManyHands("Royal Straight Flush", tests, nTests);
 
     /** == INVALID Tests ====================== */
 
     n = -1;
     nTests = 1;
     isVerbose = false;
-    HandTest invalidTests[nTests];
+    HandTest intests[nTests];
 
     // New Test
     n++;
     suit = SUIT_HEARTS;
 
-    invalidTests[n].title = "Mixed suits";
-    invalidTests[n].isVerbose = isVerbose;
-    invalidTests[n].hand = getEmptyHand();
-    invalidTests[n].hand.type = HAND_HIGHER_CARD;
+    intests[n].title = "Mixed suits";
+    intests[n].isVerbose = isVerbose;
+    intests[n].hand = getEmptyHand();
+    intests[n].hand.type = HAND_HIGHER_CARD;
     
-    invalidTests[n].cards[0] = { SUIT_SPADES, 13 };
-    invalidTests[n].cards[1] = { suit, 10 };
-    invalidTests[n].cards[2] = { suit, 12 };
-    invalidTests[n].cards[3] = { suit, 1 };
-    invalidTests[n].cards[4] = { suit, 11 };
+    intests[n].cards[0] = { SUIT_SPADES, 13 };
+    intests[n].cards[1] = { suit, 10 };
+    intests[n].cards[2] = { suit, 12 };
+    intests[n].cards[3] = { suit, 1 };
+    intests[n].cards[4] = { suit, 11 };
 
-    TestResult aux = testManyHands("Royal Straight Flush", invalidTests, nTests);
+    TestResult aux = testManyHands("Royal Straight Flush", intests, nTests);
     result.nTests = aux.nTests;
     result.nFailures = aux.nFailures;
     
@@ -212,7 +214,7 @@ TestResult testStraightFlush(void) {
     int n = -1;
     int nTests = SUITS_COUNT + 9 + 2;
     bool isVerbose = false;
-    HandTest validTests[nTests];
+    HandTest tests[nTests];
 
     char suit;
     for (int i = 0; i < SUITS_COUNT; i++) {
@@ -223,17 +225,17 @@ TestResult testStraightFlush(void) {
         string suitAux;
         suitAux += suit;
 
-        validTests[n].title = "Must fit for suit" + suitAux;
-        validTests[n].isVerbose = isVerbose;
-        validTests[n].hand = getEmptyHand();
-        validTests[n].hand.type = HAND_STRAIGHT_FLUSH;
-        validTests[n].hand.suit = suit;
+        tests[n].title = "Must fit for suit" + suitAux;
+        tests[n].isVerbose = isVerbose;
+        tests[n].hand = getEmptyHand();
+        tests[n].hand.type = HAND_STRAIGHT_FLUSH;
+        tests[n].hand.suit = suit;
         
-        validTests[n].cards[0] = { suit, 9 };
-        validTests[n].cards[1] = { suit, 10 };
-        validTests[n].cards[2] = { suit, 11 };
-        validTests[n].cards[3] = { suit, 12 };
-        validTests[n].cards[4] = { suit, 13 };
+        tests[n].cards[0] = { suit, 9 };
+        tests[n].cards[1] = { suit, 10 };
+        tests[n].cards[2] = { suit, 11 };
+        tests[n].cards[3] = { suit, 12 };
+        tests[n].cards[4] = { suit, 13 };
     }
 
 
@@ -245,14 +247,14 @@ TestResult testStraightFlush(void) {
     for (int i = 1; i < 10; i++) {
 
         n++;
-        validTests[n].title = "Must fit for sequence starting from " + to_string(i);
-        validTests[n].isVerbose = isVerbose;
-        validTests[n].hand = getEmptyHand();
-        validTests[n].hand.type = HAND_STRAIGHT_FLUSH;
-        validTests[n].hand.suit = suit;
+        tests[n].title = "Must fit for sequence starting from " + to_string(i);
+        tests[n].isVerbose = isVerbose;
+        tests[n].hand = getEmptyHand();
+        tests[n].hand.type = HAND_STRAIGHT_FLUSH;
+        tests[n].hand.suit = suit;
 
         for (int j = 0; j < CARDS_PER_HAND; j++)
-            validTests[n].cards[j] = { suit, i + j };
+            tests[n].cards[j] = { suit, i + j };
     }
 
 
@@ -262,35 +264,35 @@ TestResult testStraightFlush(void) {
     n++;
     suit = SUIT_HEARTS;
 
-    validTests[n].title = "Must fit for unordered sequences";
-    validTests[n].isVerbose = isVerbose;
-    validTests[n].hand = getEmptyHand();
-    validTests[n].hand.type = HAND_STRAIGHT_FLUSH;
-    validTests[n].hand.suit = suit;
+    tests[n].title = "Must fit for unordered sequences";
+    tests[n].isVerbose = isVerbose;
+    tests[n].hand = getEmptyHand();
+    tests[n].hand.type = HAND_STRAIGHT_FLUSH;
+    tests[n].hand.suit = suit;
     
-    validTests[n].cards[0] = { suit, 9 };
-    validTests[n].cards[1] = { suit, 12 };
-    validTests[n].cards[2] = { suit, 10 };
-    validTests[n].cards[3] = { suit, 13 };
-    validTests[n].cards[4] = { suit, 11 };
+    tests[n].cards[0] = { suit, 9 };
+    tests[n].cards[1] = { suit, 12 };
+    tests[n].cards[2] = { suit, 10 };
+    tests[n].cards[3] = { suit, 13 };
+    tests[n].cards[4] = { suit, 11 };
 
     // New Test...
     n++;
     suit = SUIT_DIAMONDS;
 
-    validTests[n].title = "Must fit for unordered sequences";
-    validTests[n].isVerbose = isVerbose;
-    validTests[n].hand = getEmptyHand();
-    validTests[n].hand.type = HAND_STRAIGHT_FLUSH;
-    validTests[n].hand.suit = suit;
+    tests[n].title = "Must fit for unordered sequences";
+    tests[n].isVerbose = isVerbose;
+    tests[n].hand = getEmptyHand();
+    tests[n].hand.type = HAND_STRAIGHT_FLUSH;
+    tests[n].hand.suit = suit;
     
-    validTests[n].cards[0] = { suit, 3 };
-    validTests[n].cards[1] = { suit, 7 };
-    validTests[n].cards[2] = { suit, 5 };
-    validTests[n].cards[3] = { suit, 4 };
-    validTests[n].cards[4] = { suit, 6 };
+    tests[n].cards[0] = { suit, 3 };
+    tests[n].cards[1] = { suit, 7 };
+    tests[n].cards[2] = { suit, 5 };
+    tests[n].cards[3] = { suit, 4 };
+    tests[n].cards[4] = { suit, 6 };
 
-    return testManyHands("Straight Flush", validTests, nTests);
+    return testManyHands("Straight Flush", tests, nTests);
 }
 
 TestResult testFourOfKind(void) {
@@ -300,7 +302,7 @@ TestResult testFourOfKind(void) {
     int n = -1;
     int nTests = SUITS_COUNT + CARD_NUM_KING + CARDS_PER_HAND;
     bool isVerbose = false;
-    HandTest validTests[nTests];
+    HandTest tests[nTests];
 
     // Must fit for any suit
     char suit;
@@ -314,18 +316,18 @@ TestResult testFourOfKind(void) {
         suitAux += suit;
         int fourOfKindNumber = i + 1;
 
-        validTests[n].title = "Must fit for suit" + suitAux;
-        validTests[n].isVerbose = isVerbose;
-        validTests[n].hand = getEmptyHand();
-        validTests[n].hand.type = HAND_4_KIND;
-        validTests[n].hand.suit = suit;
-        validTests[n].hand.fourOfKindNumber = fourOfKindNumber;
+        tests[n].title = "Must fit for suit" + suitAux;
+        tests[n].isVerbose = isVerbose;
+        tests[n].hand = getEmptyHand();
+        tests[n].hand.type = HAND_4_KIND;
+        tests[n].hand.suit = suit;
+        tests[n].hand.fourOfKindNumber = fourOfKindNumber;
         
-        validTests[n].cards[0] = { suit, fourOfKindNumber };
-        validTests[n].cards[1] = { suit, fourOfKindNumber };
-        validTests[n].cards[2] = { suit, fourOfKindNumber };
-        validTests[n].cards[3] = { suit, fourOfKindNumber };
-        validTests[n].cards[4] = { altSuit, fourOfKindNumber + 1 };
+        tests[n].cards[0] = { suit, fourOfKindNumber };
+        tests[n].cards[1] = { suit, fourOfKindNumber };
+        tests[n].cards[2] = { suit, fourOfKindNumber };
+        tests[n].cards[3] = { suit, fourOfKindNumber };
+        tests[n].cards[4] = { altSuit, fourOfKindNumber + 1 };
     }
 
     // Must fit for any number
@@ -335,18 +337,18 @@ TestResult testFourOfKind(void) {
         n++;
         int fourOfKindNumber = i;
         
-        validTests[n].title = "Must fit for card number " + to_string(fourOfKindNumber);
-        validTests[n].isVerbose = isVerbose;
-        validTests[n].hand = getEmptyHand();
-        validTests[n].hand.type = HAND_4_KIND;
-        validTests[n].hand.suit = suit;
-        validTests[n].hand.fourOfKindNumber = fourOfKindNumber;
+        tests[n].title = "Must fit for card number " + to_string(fourOfKindNumber);
+        tests[n].isVerbose = isVerbose;
+        tests[n].hand = getEmptyHand();
+        tests[n].hand.type = HAND_4_KIND;
+        tests[n].hand.suit = suit;
+        tests[n].hand.fourOfKindNumber = fourOfKindNumber;
 
-        validTests[n].cards[0] = { suit, fourOfKindNumber };
-        validTests[n].cards[1] = { suit, fourOfKindNumber };
-        validTests[n].cards[2] = { suit, fourOfKindNumber };
-        validTests[n].cards[3] = { suit, fourOfKindNumber };
-        validTests[n].cards[4] = { suit, fourOfKindNumber - 1 };
+        tests[n].cards[0] = { suit, fourOfKindNumber };
+        tests[n].cards[1] = { suit, fourOfKindNumber };
+        tests[n].cards[2] = { suit, fourOfKindNumber };
+        tests[n].cards[3] = { suit, fourOfKindNumber };
+        tests[n].cards[4] = { suit, fourOfKindNumber - 1 };
     }
 
     // Must fit with different number at any position
@@ -357,27 +359,96 @@ TestResult testFourOfKind(void) {
         n++;
         int fourOfKindNumber = 13 - i;
         
-        validTests[n].title = "Must fit for different number at place " + to_string(i + 1);
-        validTests[n].isVerbose = isVerbose;
-        validTests[n].hand = getEmptyHand();
-        validTests[n].hand.type = HAND_4_KIND;
-        validTests[n].hand.suit = suit;
-        validTests[n].hand.fourOfKindNumber = fourOfKindNumber;
+        tests[n].title = "Must fit for different number at place " + to_string(i + 1);
+        tests[n].isVerbose = isVerbose;
+        tests[n].hand = getEmptyHand();
+        tests[n].hand.type = HAND_4_KIND;
+        tests[n].hand.suit = suit;
+        tests[n].hand.fourOfKindNumber = fourOfKindNumber;
 
         for (int j = 0; j < CARDS_PER_HAND; j++)
-            validTests[n].cards[j] = { suit, fourOfKindNumber };
+            tests[n].cards[j] = { suit, fourOfKindNumber };
 
         // Place different card at varying position
-        validTests[n].cards[i].number = fourOfKindNumber - 1;
+        tests[n].cards[i].number = fourOfKindNumber - 1;
     }
 
-    return testManyHands("Four of a kind", validTests, nTests);
+    return testManyHands("Four of a kind", tests, nTests);
+}
+
+
+/**
+ * 01 pair + 03 of a kind.
+ * - In case of a tie, the higher 03 of a kind wins;
+ * - If it remains tied, the higher pair wins;
+ */
+TestResult testFullHouse(void) {
+
+    /** == VALID ======================================== */
+
+    int n = -1;
+    int nTests = CARD_NUM_KING + 10;
+    bool isVerbose = false;
+    HandTest tests[nTests];
+    
+    // Must fit for any number
+    for (int i = 1; i <= CARD_NUM_KING; i++) {
+        
+        n++;
+        int pairNumber = i;
+        int threeOfKindNumber = CARD_NUM_KING - i + 1;
+        if (pairNumber == threeOfKindNumber)
+            threeOfKindNumber--;
+
+        tests[n].title = "Must fit for card numbers: [Pair: " + to_string(pairNumber) + "] / [03 of kind: " + to_string(threeOfKindNumber) + "]";
+        tests[n].isVerbose = isVerbose;
+        tests[n].hand = getEmptyHand();
+        tests[n].hand.type = HAND_FULL_HOUSE;
+        // tests[n].hand.suit = suit;
+        tests[n].hand.pairNumber = pairNumber;
+        tests[n].hand.threeOfKindNumber = threeOfKindNumber;
+        
+        tests[n].cards[0] = { SUIT_HEARTS, pairNumber };
+        tests[n].cards[1] = { SUIT_CLUBS, pairNumber };
+        tests[n].cards[2] = { SUIT_DIAMONDS, threeOfKindNumber };
+        tests[n].cards[3] = { SUIT_SPADES, threeOfKindNumber };
+        tests[n].cards[4] = { SUIT_HEARTS, threeOfKindNumber };
+    }
+
+    int pairNumber = 3;
+    int threeOfKindNumber = 8;
+
+    for (int i = 0; i < CARDS_PER_HAND; i++) {
+        for (int j = 0; j < CARDS_PER_HAND; j++) {
+            
+            if (i >= j)
+                continue;
+
+            n++;
+            tests[n].title = "Must fit for pairs at position (" + to_string(i + 1) + "/" + to_string(j + 1) + ")";
+            tests[n].isVerbose = isVerbose;
+            tests[n].hand = getEmptyHand();
+            tests[n].hand.type = HAND_FULL_HOUSE;
+            // tests[n].hand.suit = suit;
+            tests[n].hand.pairNumber = pairNumber;
+            tests[n].hand.threeOfKindNumber = threeOfKindNumber;
+
+            for (int k = 0; k < CARDS_PER_HAND; k++) {
+                if (k == i || k == j)
+                    tests[n].cards[k] = { SUIT_HEARTS, pairNumber };
+                else
+                    tests[n].cards[k] = { SUIT_DIAMONDS, threeOfKindNumber };
+            }
+        }   
+    }
+
+    return testManyHands("Full House", tests, nTests);
 }
 
 int main() {
 
     // Notify tests start
-    cout << endl << endl
+    cout << endl
         << ">> ---------------------------------------------------------------------------- >>" << endl
         << ">> Running tests... >> Running tests... >> Running tests... >> Running tests... >>" << endl
         << ">> ---------------------------------------------------------------------------- >>" << endl;
@@ -399,6 +470,11 @@ int main() {
 
     nGroups++;
     aux = testFourOfKind();
+    acc.nTests += aux.nTests;
+    acc.nFailures += aux.nFailures;
+
+    nGroups++;
+    aux = testFullHouse();
     acc.nTests += aux.nTests;
     acc.nFailures += aux.nFailures;
 

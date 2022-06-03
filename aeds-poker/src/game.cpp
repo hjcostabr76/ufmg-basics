@@ -85,7 +85,7 @@ int getHandScore(const Hand hand) {
         hand.type
         + 5*hand.fourOfKindNumber
         + 4*hand.threeOfKindNumber
-        + 3*hand.pairNumber1
+        + 3*hand.pairNumber
         + 2*hand.pairNumber2
         + 1*hand.highest
     );
@@ -101,6 +101,7 @@ bool hasNOfAKind(const int n, const Card cards[CARDS_PER_HAND], int *matchedNumb
     // Set each number occurrences count
     if (counts == NULL)
         counts = (int*)malloc(CARDS_PER_SUIT * sizeof(int));
+    memset(counts, 0, CARDS_PER_SUIT * sizeof(int));
     countCards(cards, counts);
 
     // Check if we have the exact counting we're looking for
@@ -114,6 +115,10 @@ bool hasNOfAKind(const int n, const Card cards[CARDS_PER_HAND], int *matchedNumb
     
     int bestCount = 0;
     for (int i = 0; i < CARDS_PER_HAND; i++) {
+
+        if (!cards[i].number)
+            continue;
+
         int thisCount = counts[cards[i].number - 1];
         if (thisCount > bestCount) {
             bestCount = thisCount;
@@ -123,6 +128,13 @@ bool hasNOfAKind(const int n, const Card cards[CARDS_PER_HAND], int *matchedNumb
     }
 
     return bestCount == n;
+}
+
+void removeCardFromHand(Card cards[CARDS_PER_HAND], const int numberToRemove) {
+    for (int i = 0; i < CARDS_PER_HAND; i++) {
+        if (cards[i].number == numberToRemove)
+            cards[i].number = 0;
+    }
 }
 
 Hand getEmptyHand(void) {
@@ -138,29 +150,30 @@ Hand getHand(const Card handCards[CARDS_PER_HAND]) {
 
     // Detect hand
     Hand hand = getEmptyHand();
-
+    
     char suit;
+    int pairNumber = 0;
+    int fourOfKindNumber = 0;
+    int threeOfKindNumber = 0;
+
     if (isRoyalStraightFlush(cards, &suit)) {
         hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
         hand.suit = suit;
-    }
 
-    if (isStraightFlush(cards, &suit)) {
+    } else if (isStraightFlush(cards, &suit)) {
         hand.type = HAND_STRAIGHT_FLUSH;
         hand.suit = suit;
-    }
 
-    int fourOfKindNumber = 0;
-    if (isFourOfKind(cards, &fourOfKindNumber, &suit)) {
+    } if (isFourOfKind(cards, &fourOfKindNumber, &suit)) {
         hand.type =  HAND_4_KIND;
         hand.suit =  suit;
         hand.fourOfKindNumber =  fourOfKindNumber;
-    }
 
-    // int threeOfKindNumber = 0;
-    // int pairNumber1 = 0;
-    // if (isFullHouse(cards, &threeOfKindNumber, &pairNumber1))
-    //     return HAND_FULL_HOUSE;
+    } if (isFullHouse(cards, &threeOfKindNumber, &pairNumber)) {
+        hand.type = HAND_FULL_HOUSE;
+        hand.pairNumber =  pairNumber;
+        hand.threeOfKindNumber =  threeOfKindNumber;
+    }
 
     // if (isFlush(cards, &suit))
     //     return HAND_FLUSH;
@@ -172,10 +185,10 @@ Hand getHand(const Card handCards[CARDS_PER_HAND]) {
     //     return HAND_3_KIND;
 
     // int pairNumber2 = 0;
-    // if (isTwoPairs(cards, &pairNumber1, &pairNumber2))
+    // if (isTwoPairs(cards, &pairNumber, &pairNumber2))
     //     return HAND_2_PAIRS;
 
-    // if (isOnePair(cards, pairNumber1))
+    // if (isOnePair(cards, pairNumber))
     //     return HAND_PAIR;
 
     hand.score = getHandScore(hand);
@@ -208,6 +221,35 @@ bool isStraightFlush(const Card cards[CARDS_PER_HAND], char *suit) {
 bool isFourOfKind(const Card cards[CARDS_PER_HAND], int *fourOfKindNumber, char *suit) {
     bool isHigherHand = isRoyalStraightFlush(cards, NULL) || isStraightFlush(cards, NULL);
     return !isHigherHand && hasNOfAKind(4, cards, fourOfKindNumber, suit, NULL);
+}
+
+/**
+ * 01 pair + 03 of a kind.
+ * - In case of a tie, the higher 03 of a kind wins;
+ * - If it remains tied, the higher pair wins;
+ */
+bool isFullHouse(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber, int *pairNumber) {
+
+    *threeOfKindNumber = 0;
+    *pairNumber = 0;
+
+    bool isHigherHand = isRoyalStraightFlush(cards, NULL) || isStraightFlush(cards, NULL) || isFourOfKind(cards, NULL, NULL);
+    if (isHigherHand)
+        return false;
+
+    // Check the 03 of a kind part
+    int counts[CARDS_PER_SUIT] = { 0 };
+    if (!hasNOfAKind(3, cards, threeOfKindNumber, NULL, counts))
+        return false;
+
+    // Check the pair part
+    Card cardsCopy[CARDS_PER_HAND];
+    memcpy(cardsCopy, cards, CARDS_PER_HAND * sizeof(Card));
+    removeCardFromHand(cardsCopy, *threeOfKindNumber);
+
+    // return hasNOfAKind(2, cardsCopy, pairNumber, NULL, NULL);
+    bool dbg = hasNOfAKind(2, cardsCopy, pairNumber, NULL, NULL);
+    return dbg;
 }
 
 /**

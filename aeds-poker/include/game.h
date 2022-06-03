@@ -12,11 +12,11 @@ using namespace std;
 bool isRoyalStraightFlush(const Card cards[CARDS_PER_HAND], char *suit);
 bool isStraightFlush(const Card cards[CARDS_PER_HAND], char *suit);
 bool isFourOfKind(const Card cards[CARDS_PER_HAND], int *fourOfKindNumber, char *suit);
-// bool isFullHouse(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber, int *pairNumber);
+bool isFullHouse(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber, int *pairNumber);
 // bool isFlush(const Card cards[CARDS_PER_HAND], char *suit);
 // bool isStraight(const Card cards[CARDS_PER_HAND]);
 // bool isThreeOfKind(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber);
-// bool isTwoPairs(const Card cards[CARDS_PER_HAND], int *pairNumber1, int *pairNumber2);
+// bool isTwoPairs(const Card cards[CARDS_PER_HAND], int *pairNumber, int *pairNumber2);
 // bool isOnePair(const Card cards[CARDS_PER_HAND], int &pairCard);
 
 Hand getEmptyHand(void);

@@ -78,7 +78,7 @@ typedef struct {
     char suit;
     int fourOfKindNumber;
     int threeOfKindNumber;
-    int pairNumber1;
+    int pairNumber;
     int pairNumber2;
     int highest;
     int score;
