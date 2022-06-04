@@ -214,6 +214,8 @@ TestResult testStraightFlush(void) {
     bool isVerbose = false;
     HandTest tests[nTests];
 
+    /** == VALID: Must for any suit ===================== */
+
     char suit;
     for (int i = 0; i < SUITS_COUNT; i++) {
         
@@ -311,6 +313,7 @@ TestResult testFourOfKind(void) {
         string suitAux;
         suitAux += suit;
         int fourOfKindNumber = i + 1;
+        int otherCardNumber = (fourOfKindNumber > 1) ? fourOfKindNumber - 1 : 3;
 
         tests[n].title = "Must fit for suit " + suitAux;
         tests[n].isVerbose = isVerbose;
@@ -322,7 +325,7 @@ TestResult testFourOfKind(void) {
         tests[n].cards[1] = { suit, fourOfKindNumber };
         tests[n].cards[2] = { suit, fourOfKindNumber };
         tests[n].cards[3] = { suit, fourOfKindNumber };
-        tests[n].cards[4] = { altSuit, fourOfKindNumber + 1 };
+        tests[n].cards[4] = { altSuit, otherCardNumber };
     }
 
     // Must fit for any number
@@ -331,6 +334,7 @@ TestResult testFourOfKind(void) {
         
         n++;
         int fourOfKindNumber = i;
+        int otherCardNumber = (fourOfKindNumber > 1) ? fourOfKindNumber - 1 : 3;
         
         tests[n].title = "Must fit for card number " + to_string(fourOfKindNumber);
         tests[n].isVerbose = isVerbose;
@@ -342,9 +346,9 @@ TestResult testFourOfKind(void) {
         tests[n].cards[1] = { suit, fourOfKindNumber };
         tests[n].cards[2] = { suit, fourOfKindNumber };
         tests[n].cards[3] = { suit, fourOfKindNumber };
-        tests[n].cards[4] = { suit, fourOfKindNumber - 1 };
+        tests[n].cards[4] = { suit, otherCardNumber };
     }
-
+    
     // Must fit with different number at any position
     suit = SUIT_SPADES;
 
@@ -395,7 +399,6 @@ TestResult testFullHouse(void) {
         tests[n].isVerbose = isVerbose;
         tests[n].hand = getEmptyHand();
         tests[n].hand.type = HAND_FULL_HOUSE;
-        // tests[n].hand.suit = suit;
         tests[n].hand.pairNumber = pairNumber;
         tests[n].hand.threeOfKindNumber = threeOfKindNumber;
         
@@ -406,6 +409,7 @@ TestResult testFullHouse(void) {
         tests[n].cards[4] = { SUIT_HEARTS, threeOfKindNumber };
     }
 
+    // Must fit for combinations at any position
     int pairNumber = 3;
     int threeOfKindNumber = 8;
 
@@ -420,7 +424,6 @@ TestResult testFullHouse(void) {
             tests[n].isVerbose = isVerbose;
             tests[n].hand = getEmptyHand();
             tests[n].hand.type = HAND_FULL_HOUSE;
-            // tests[n].hand.suit = suit;
             tests[n].hand.pairNumber = pairNumber;
             tests[n].hand.threeOfKindNumber = threeOfKindNumber;
 
@@ -540,6 +543,100 @@ TestResult testStraight(void) {
     return testManyHands("Straight", tests, nTests);
 }
 
+
+/**
+ * 03 equal cards + 02 different ones.
+ * - In case of a tie, the one with the highest 03 of a kind card wins;
+ * - If it remains, the one with the highest card wins;
+ */
+TestResult testThreeOfKind(void) {
+
+    int n = -1;
+    int nTests = CARD_NUM_KING + 10 + 1;
+    bool isVerbose = false;
+    HandTest tests[nTests];
+
+    // Must fit for any number
+    for (int i = 1; i <= CARD_NUM_KING; i++) {
+        n++;
+        
+        // Set numbers for a combination test
+        int threeOfKindNumber = i;
+        int otherCard1;
+        int otherCard2;
+
+        if (threeOfKindNumber > 2) {
+            otherCard1 = threeOfKindNumber - 1;
+            otherCard2 = threeOfKindNumber - 2;
+        } else {
+            otherCard1 = threeOfKindNumber + 1;
+            otherCard2 = threeOfKindNumber + 2;
+        }
+
+        // Build test config
+        tests[n].title = "Must fit for card " + to_string(threeOfKindNumber);
+        tests[n].isVerbose = isVerbose;
+        tests[n].hand = getEmptyHand();
+        tests[n].hand.type = HAND_3_KIND;
+        tests[n].hand.threeOfKindNumber = threeOfKindNumber;
+        
+        tests[n].cards[0] = { SUIT_HEARTS, otherCard1 };
+        tests[n].cards[1] = { SUIT_CLUBS, otherCard2 };
+        tests[n].cards[2] = { SUIT_DIAMONDS, threeOfKindNumber };
+        tests[n].cards[3] = { SUIT_SPADES, threeOfKindNumber };
+        tests[n].cards[4] = { SUIT_HEARTS, threeOfKindNumber };
+    }
+
+    // Must fit three of a kind in any position
+    int otherCard1 = 3;
+    int otherCard2 = 4;
+    int threeOfKindNumber = 5;
+
+    for (int i = 0; i < CARDS_PER_HAND; i++) {
+        for (int j = 0; j < CARDS_PER_HAND; j++) {
+            
+            if (i >= j)
+                continue;
+
+            n++;
+            tests[n].title = "Must fit for the other two cards at position (" + to_string(i + 1) + "/" + to_string(j + 1) + ")";
+            tests[n].isVerbose = isVerbose;
+            tests[n].hand = getEmptyHand();
+            tests[n].hand.type = HAND_3_KIND;
+            tests[n].hand.threeOfKindNumber = threeOfKindNumber;
+
+            for (int k = 0; k < CARDS_PER_HAND; k++) {
+                if (k == i)
+                    tests[n].cards[k] = { SUIT_HEARTS, otherCard1 };
+                else if (k == j)
+                    tests[n].cards[k] = { SUIT_CLUBS, otherCard2 };
+                else
+                    tests[n].cards[k] = { SUIT_DIAMONDS, threeOfKindNumber };
+            }
+        }   
+    }
+
+    // New Test...
+    otherCard1 = 5;
+    threeOfKindNumber = 1;
+
+    n++;
+    tests[n].title = "Must not match as a full house";
+    tests[n].isVerbose = isVerbose;
+    tests[n].hand = getEmptyHand();
+    tests[n].hand.type = HAND_FULL_HOUSE;
+    tests[n].hand.threeOfKindNumber = threeOfKindNumber;
+    tests[n].hand.pairNumber = otherCard1;
+    
+    tests[n].cards[0] = { SUIT_HEARTS, otherCard1 };
+    tests[n].cards[1] = { SUIT_CLUBS, otherCard1 };
+    tests[n].cards[2] = { SUIT_DIAMONDS, threeOfKindNumber };
+    tests[n].cards[3] = { SUIT_SPADES, threeOfKindNumber };
+    tests[n].cards[4] = { SUIT_HEARTS, threeOfKindNumber };
+
+    return testManyHands("Three of a kind", tests, nTests);
+}
+
 int main() {
 
     // Notify tests start
@@ -583,9 +680,13 @@ int main() {
     acc.nTests += aux.nTests;
     acc.nFailures += aux.nFailures;
 
+    nGroups++;
+    aux = testThreeOfKind();
+    acc.nTests += aux.nTests;
+    acc.nFailures += aux.nFailures;
+
     // Notify end result
     bool isSuccess = acc.nFailures == 0;
-
     cout << endl << "<< ---------------------------------------------------------------------------- <<" << endl;
 
     if (isSuccess)

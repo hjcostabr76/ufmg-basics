@@ -7,21 +7,7 @@
 
 using namespace std;
 
-bool isValidCardNumber(const int number) {
-    return number >= CARD_NUM_ACE && number <= CARD_NUM_KING;
-}
 
-/**
- * TODO: 2022-06-03 - Will we really need this?
- */
-bool isValidSuit(const char suit) {
-    char validSuits[SUITS_COUNT] = { SUIT_CLUBS, SUIT_SPADES, SUIT_HEARTS, SUIT_DIAMONDS };
-    for (int i = 0; i < SUITS_COUNT; i++) {
-        if (suit == validSuits[i])
-            return true;
-    }
-    return false;
-}
 
 
 
@@ -41,28 +27,7 @@ int getMatchedCountNumber(const int counts[CARDS_PER_SUIT], const int n) {
 
 
 
-/**
- * 03 equal cards + 02 different ones.
- * - In case of a tie, the one with the highest 03 of a kind card wins;
- * - If it remains, the one with the highest card wins;
- */
-// bool isThreeOfKind(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber) {
 
-//     bool isHigherHand = (
-//         isRoyalStraightFlush(cards)
-//         || isStraightFlush(cards)
-//         || isFourOfKind(cards, NULL)
-//         || isFullHouse(cards, NULL, NULL)
-//         || isFlush(cards, NULL)
-//         || isStraight(cards)
-//     );
-
-//     if (isHigherHand)
-//         return false;
-
-//     int counts[CARDS_PER_SUIT] = { 0 };
-//     return hasNOfAKind(3, cards, threeOfKindNumber, counts);
-// }
 
 /**
  * 02 pairs.

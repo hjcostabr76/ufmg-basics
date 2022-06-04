@@ -25,6 +25,19 @@ using namespace std;
 
 const char SUITS_LIST[SUITS_COUNT] = { SUIT_CLUBS, SUIT_SPADES, SUIT_HEARTS, SUIT_DIAMONDS };
 
+const string HAND_NAMES[10] = {
+    "Higher card",
+    "Pair",
+    "Two Pairs",
+    "Three of a kind...",
+    "Straight...",
+    "Flush...",
+    "Full House...",
+    "Four of a kind...",
+    "Straight Flush...",
+    "Royal Straight Flush...",
+};
+
 /**
  * =================================================
  * -- ABSTRACT -------------------------------------

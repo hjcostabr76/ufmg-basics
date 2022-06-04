@@ -79,5 +79,5 @@ void dbgPrintPLay(const Play play) {
 
 void dbgStep(string msg) {
     if (DEBUG_ENABLE)
-        cout << msg << endl;
+        cout << "[log] " << msg << endl;
 }
