@@ -16,7 +16,7 @@ bool isFullHouse(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber, int *
 bool isFlush(const Card cards[CARDS_PER_HAND], char *suit);
 bool isStraight(const Card cards[CARDS_PER_HAND]);
 bool isThreeOfKind(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber);
-// bool isTwoPairs(const Card cards[CARDS_PER_HAND], int *pairNumber, int *pairNumber2);
+bool isTwoPairs(const Card cards[CARDS_PER_HAND], int *pairNumber, int *pairNumber2);
 // bool isOnePair(const Card cards[CARDS_PER_HAND], int &pairCard);
 
 Hand getEmptyHand(void);

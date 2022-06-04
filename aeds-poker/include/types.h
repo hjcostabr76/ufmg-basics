@@ -12,6 +12,8 @@ using namespace std;
 
 #define DEBUG_ENABLE true
 
+#define HAND_COUNT 10
+
 #define CARDS_PER_HAND 5
 #define CARDS_PER_SUIT 13
 #define CARD_NUM_ACE 1
@@ -25,7 +27,7 @@ using namespace std;
 
 const char SUITS_LIST[SUITS_COUNT] = { SUIT_CLUBS, SUIT_SPADES, SUIT_HEARTS, SUIT_DIAMONDS };
 
-const string HAND_NAMES[10] = {
+const string HAND_NAMES[HAND_COUNT] = {
     "Higher card",
     "Pair",
     "Two Pairs",

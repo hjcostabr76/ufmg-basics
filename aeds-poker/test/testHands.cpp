@@ -5,8 +5,6 @@
 #include "../include/game.h"
 #include "../include/debug.h"
 
-using namespace std;
-
 typedef struct {
     Card cards[CARDS_PER_HAND];
     Hand hand;
@@ -30,7 +28,7 @@ typedef struct {
  */
 bool testOneHand(const HandTest test) {
 
-    cout << endl << "Testing (" << test.title << ")" << endl;
+    std::cout << endl << "Testing (" << test.title << ")" << endl;
     
     Hand hand = getHand(test.cards);
     bool isSuccess = (
@@ -45,44 +43,44 @@ bool testOneHand(const HandTest test) {
     );
 
     if (test.isVerbose || !isSuccess) {
-        cout << "\t-- Cards: -----------------------" << endl;
-        cout << dbgGetCardsPrint(test.cards, CARDS_PER_HAND);
+        std::cout << "\t-- Cards: -----------------------" << endl;
+        std::cout << dbgGetCardsPrint(test.cards, CARDS_PER_HAND);
         
         string suit;
         suit += hand.suit;
 
-        cout << "\t-- What came: -------------------" << endl;
-        cout << "\thand.suit: '" << suit << "'" << endl;
-        cout << "\thand.type: '" << to_string(hand.type) << "'" << endl;
-        cout << "\thand.fourOfKindNumber: '" << to_string(hand.fourOfKindNumber) << "'" << endl;
-        cout << "\thand.threeOfKindNumber: '" << to_string(hand.threeOfKindNumber) << "'" << endl;
-        cout << "\thand.pairNumber: '" << to_string(hand.pairNumber) << "'" << endl;
-        cout << "\thand.pairNumber2: '" << to_string(hand.pairNumber2) << "'" << endl;
-        cout << "\thand.highest: '" << to_string(hand.highest) << "'" << endl;
+        std::cout << "\t-- What came: -------------------" << endl;
+        std::cout << "\thand.suit: '" << suit << "'" << endl;
+        std::cout << "\thand.type: '" << to_string(hand.type) << "'" << endl;
+        std::cout << "\thand.fourOfKindNumber: '" << to_string(hand.fourOfKindNumber) << "'" << endl;
+        std::cout << "\thand.threeOfKindNumber: '" << to_string(hand.threeOfKindNumber) << "'" << endl;
+        std::cout << "\thand.pairNumber: '" << to_string(hand.pairNumber) << "'" << endl;
+        std::cout << "\thand.pairNumber2: '" << to_string(hand.pairNumber2) << "'" << endl;
+        std::cout << "\thand.highest: '" << to_string(hand.highest) << "'" << endl;
         
         suit = "";
         suit += test.hand.suit;
-        cout << "\t-- What was supposed to come: ---" << endl;
-        cout << "\thand.suit: '" << suit << "'" << endl;
-        cout << "\thand.type: '" << to_string(test.hand.type) << "'" << endl;
-        cout << "\thand.fourOfKindNumber: '" << to_string(test.hand.fourOfKindNumber) << "'" << endl;
-        cout << "\thand.threeOfKindNumber: '" << to_string(test.hand.threeOfKindNumber) << "'" << endl;
-        cout << "\thand.pairNumber: '" << to_string(test.hand.pairNumber) << "'" << endl;
-        cout << "\thand.pairNumber2: '" << to_string(test.hand.pairNumber2) << "'" << endl;
-        cout << "\thand.highest: '" << to_string(test.hand.highest) << "'" << endl;
+        std::cout << "\t-- What was supposed to come: ---" << endl;
+        std::cout << "\thand.suit: '" << suit << "'" << endl;
+        std::cout << "\thand.type: '" << to_string(test.hand.type) << "'" << endl;
+        std::cout << "\thand.fourOfKindNumber: '" << to_string(test.hand.fourOfKindNumber) << "'" << endl;
+        std::cout << "\thand.threeOfKindNumber: '" << to_string(test.hand.threeOfKindNumber) << "'" << endl;
+        std::cout << "\thand.pairNumber: '" << to_string(test.hand.pairNumber) << "'" << endl;
+        std::cout << "\thand.pairNumber2: '" << to_string(test.hand.pairNumber2) << "'" << endl;
+        std::cout << "\thand.highest: '" << to_string(test.hand.highest) << "'" << endl;
     }
 
     if (isSuccess)
-        cout << "> OK!" << endl;
+        std::cout << "> OK!" << endl;
     else
-        cout << "> Not OK!" << endl;
+        std::cout << "> Not OK!" << endl;
 
     return isSuccess;
 }
 
 TestResult testManyHands(const string title, HandTest tests[], const int nTests) {
 
-    cout << endl << endl << "----- New Test: " << title << " ------------------------------";
+    std::cout << endl << endl << "----- New Test: " << title << " ------------------------------";
 
     int nFailures = 0;
     for (int i = 0; i < nTests; i++) {
@@ -93,9 +91,9 @@ TestResult testManyHands(const string title, HandTest tests[], const int nTests)
     }
 
     if (!nFailures)
-        cout << "-------------------- ALL TESTS PASSED! ------------------" << endl;
+        std::cout << "-------------------- ALL TESTS PASSED! ------------------" << endl;
     else
-        cout << "-------------------- " << to_string(nFailures) << " TEST(S) FAILED --------------------" << endl;
+        std::cout << "-------------------- " << to_string(nFailures) << " TEST(S) FAILED --------------------" << endl;
 
     return { nTests, nFailures };
 }
@@ -109,14 +107,11 @@ TestResult testManyHands(const string title, HandTest tests[], const int nTests)
 /** 05 cards of the same suit in row counting from 10 to Aces. */
 TestResult testRoyalStraightFlush(void) {
     
-    TestResult result;
-
     /** == VALID: Must fit for all suits ================ */
 
     int n = -1;
-    int nTests = SUITS_COUNT + 2;
     bool isVerbose = false;
-    HandTest tests[nTests];
+    HandTest tests[SUITS_COUNT + 3];
 
     char suit;
     
@@ -161,49 +156,34 @@ TestResult testRoyalStraightFlush(void) {
 
     // New Test...
     n++;
-    suit = SUIT_DIAMONDS;
-
     tests[n].title = "Must fit for unordered sequences";
     tests[n].isVerbose = isVerbose;
     tests[n].hand = getEmptyHand();
     tests[n].hand.type = HAND_ROYAL_STRAIGHT_FLUSH;
-    tests[n].hand.suit = suit;
+    tests[n].hand.suit = SUIT_DIAMONDS;
     
-    tests[n].cards[0] = { suit, 13 };
-    tests[n].cards[1] = { suit, 10 };
-    tests[n].cards[2] = { suit, 12 };
-    tests[n].cards[3] = { suit, 1 };
-    tests[n].cards[4] = { suit, 11 };
-
-    result = testManyHands("Royal Straight Flush", tests, nTests);
+    tests[n].cards[0] = { SUIT_DIAMONDS, 13 };
+    tests[n].cards[1] = { SUIT_DIAMONDS, 10 };
+    tests[n].cards[2] = { SUIT_DIAMONDS, 12 };
+    tests[n].cards[3] = { SUIT_DIAMONDS, 1 };
+    tests[n].cards[4] = { SUIT_DIAMONDS, 11 };
 
     /** == INVALID Tests ====================== */
 
-    n = -1;
-    nTests = 1;
-    isVerbose = false;
-    HandTest intests[nTests];
-
     // New Test
     n++;
-    suit = SUIT_HEARTS;
-
-    intests[n].title = "Must not match for mixed suits";
-    intests[n].isVerbose = isVerbose;
-    intests[n].hand = getEmptyHand();
-    intests[n].hand.type = HAND_STRAIGHT;
+    tests[n].title = "Must not match for mixed suits";
+    tests[n].isVerbose = isVerbose;
+    tests[n].hand = getEmptyHand();
+    tests[n].hand.type = HAND_STRAIGHT;
     
-    intests[n].cards[0] = { SUIT_SPADES, 13 };
-    intests[n].cards[1] = { suit, 10 };
-    intests[n].cards[2] = { suit, 12 };
-    intests[n].cards[3] = { suit, 1 };
-    intests[n].cards[4] = { suit, 11 };
+    tests[n].cards[0] = { SUIT_SPADES, 13 };
+    tests[n].cards[1] = { SUIT_HEARTS, 10 };
+    tests[n].cards[2] = { SUIT_HEARTS, 12 };
+    tests[n].cards[3] = { SUIT_HEARTS, 1 };
+    tests[n].cards[4] = { SUIT_HEARTS, 11 };
 
-    TestResult aux = testManyHands("Royal Straight Flush", intests, nTests);
-    result.nTests = aux.nTests;
-    result.nFailures = aux.nFailures;
-    
-    return result;
+    return testManyHands(HAND_NAMES[HAND_ROYAL_STRAIGHT_FLUSH], tests, n + 1);
 }
 
 /** 05 cards of the same suit in a row NOT counting from 10 to Ace (!= RSF). */
@@ -292,7 +272,7 @@ TestResult testStraightFlush(void) {
     tests[n].cards[3] = { suit, 4 };
     tests[n].cards[4] = { suit, 6 };
 
-    return testManyHands("Straight Flush", tests, nTests);
+    return testManyHands(HAND_NAMES[HAND_STRAIGHT_FLUSH], tests, nTests);
 }
 
 TestResult testFourOfKind(void) {
@@ -370,7 +350,7 @@ TestResult testFourOfKind(void) {
         tests[n].cards[i].number = fourOfKindNumber - 1;
     }
 
-    return testManyHands("Four of a kind", tests, nTests);
+    return testManyHands(HAND_NAMES[HAND_4_KIND], tests, nTests);
 }
 
 
@@ -436,7 +416,7 @@ TestResult testFullHouse(void) {
         }   
     }
 
-    return testManyHands("Full House", tests, nTests);
+    return testManyHands(HAND_NAMES[HAND_FULL_HOUSE], tests, nTests);
 }
 
 /**
@@ -486,7 +466,7 @@ TestResult testFlush(void) {
     tests[n].cards[3] = { SUIT_DIAMONDS, 4 };
     tests[n].cards[4] = { SUIT_CLUBS, 9 };
 
-    return testManyHands("Flush", tests, nTests);
+    return testManyHands(HAND_NAMES[HAND_FLUSH], tests, nTests);
 }
 
 /**
@@ -540,7 +520,7 @@ TestResult testStraight(void) {
     tests[n].cards[3] = { SUIT_HEARTS, 13 };
     tests[n].cards[4] = { SUIT_HEARTS, 11 };
 
-    return testManyHands("Straight", tests, nTests);
+    return testManyHands(HAND_NAMES[HAND_STRAIGHT], tests, nTests);
 }
 
 
@@ -634,13 +614,90 @@ TestResult testThreeOfKind(void) {
     tests[n].cards[3] = { SUIT_SPADES, threeOfKindNumber };
     tests[n].cards[4] = { SUIT_HEARTS, threeOfKindNumber };
 
-    return testManyHands("Three of a kind", tests, nTests);
+    return testManyHands(HAND_NAMES[HAND_FULL_HOUSE], tests, nTests);
 }
 
+/**
+ * 02 pairs.
+ * - In case of a tie, the one with the highest pair card wins;
+ * - If it remains, the one with the highest lowest pair card wins;
+ * - If it remains, the one with the highest card wins;
+ */
+TestResult testTwoPairs(void) {
+
+    int n = -1;
+    int nTests = 78 + 1;
+    bool isVerbose = false;
+    HandTest tests[nTests];
+
+    // Must fit for combinations at any position
+    for (int pairNumber1 = 1; pairNumber1 <= CARD_NUM_KING; pairNumber1++) {
+        for (int pairNumber2 = 1; pairNumber2 <= CARD_NUM_KING; pairNumber2++) {
+
+            // Set the 03 numbers we're gonna need
+            if (pairNumber1 >= pairNumber2)
+                continue;
+
+            // foo++;
+            int otherNumber = 1;
+            while (otherNumber == pairNumber1 || otherNumber == pairNumber2)
+                otherNumber++;
+
+            // Build test
+            n++;
+
+            tests[n].title = "Must fit for pairs of numbers (" + to_string(pairNumber1) + "/" + to_string(pairNumber2) + ")";
+            tests[n].isVerbose = isVerbose;
+            tests[n].hand = getEmptyHand();
+            tests[n].hand.type = HAND_2_PAIRS;
+            tests[n].hand.pairNumber = pairNumber1;
+            tests[n].hand.pairNumber2 = pairNumber2;
+
+            tests[n].cards[0] = { SUIT_HEARTS, pairNumber1 };
+            tests[n].cards[1] = { SUIT_CLUBS, pairNumber2 };
+            tests[n].cards[2] = { SUIT_DIAMONDS, otherNumber };
+            tests[n].cards[3] = { SUIT_DIAMONDS, pairNumber2 };
+            tests[n].cards[4] = { SUIT_SPADES, pairNumber1 };
+        }   
+    }
+
+    n++;
+    int pairNumber1 = 4;
+    int threeOfKindNumber = 8;
+
+    tests[n].title = "Must not fit as full house";
+    tests[n].isVerbose = isVerbose;
+    tests[n].hand = getEmptyHand();
+    tests[n].hand.type = HAND_FULL_HOUSE;
+    tests[n].hand.pairNumber = pairNumber1;
+    tests[n].hand.threeOfKindNumber = threeOfKindNumber;
+
+    tests[n].cards[0] = { SUIT_HEARTS, pairNumber1 };
+    tests[n].cards[1] = { SUIT_CLUBS, threeOfKindNumber };
+    tests[n].cards[2] = { SUIT_DIAMONDS, threeOfKindNumber };
+    tests[n].cards[3] = { SUIT_DIAMONDS, threeOfKindNumber };
+    tests[n].cards[4] = { SUIT_SPADES, pairNumber1 };
+
+    return testManyHands(HAND_NAMES[HAND_2_PAIRS], tests, nTests);
+}
+
+// int main(int argc, char const *argv[]) {
 int main() {
 
+    // Validate input
+    // if (argc != 2)
+    //     throw invalid_argument("You must specify one main hand type code for the test (1 ~ 10)");
+
+    // string cmdCode;
+    // cmdCode += argv[1];
+    // int temp = stoi(cmdCode);
+    // if (temp < 1 || temp > 10)
+    //     throw invalid_argument("Invalid hand type code '" + cmdCode + "'. Valid are: (1 ~ 10)");
+
+    // HandEnum mainTestHand = (HandEnum)(temp - 1);
+
     // Notify tests start
-    cout << endl
+    std::cout << endl
         << ">> ---------------------------------------------------------------------------- >>" << endl
         << ">> Running tests... >> Running tests... >> Running tests... >> Running tests... >>" << endl
         << ">> ---------------------------------------------------------------------------- >>" << endl;
@@ -685,19 +742,26 @@ int main() {
     acc.nTests += aux.nTests;
     acc.nFailures += aux.nFailures;
 
+    nGroups++;
+    aux = testTwoPairs();
+    acc.nTests += aux.nTests;
+    acc.nFailures += aux.nFailures;
+
     // Notify end result
     bool isSuccess = acc.nFailures == 0;
-    cout << endl << "<< ---------------------------------------------------------------------------- <<" << endl;
+    std::cout << endl << "<< ---------------------------------------------------------------------------- <<" << endl;
 
     if (isSuccess)
-        cout << "<<<< All tests passed! >>> <<<< All tests passed!! >>>> <<< All tests passed! >>>>" << endl;
+        std::cout << "<<<< All tests passed! >>> <<<< All tests passed!! >>>> <<< All tests passed! >>>>" << endl;
     else
-        cout << "<<<<--- TESTS FAILED --->>> <<<--- TESTS FAILED --->>> <<<--- TESTS FAILED --->>>>" << endl;
+        std::cout << "<<<<--- TESTS FAILED --->>> <<<--- TESTS FAILED --->>> <<<--- TESTS FAILED --->>>>" << endl;
     
-    cout << "<< ---------------------------------------------------------------------------- <<" << endl
+    std::cout << "<< ---------------------------------------------------------------------------- <<" << endl
         << endl
         << ">> " << to_string(nGroups) << " test group(s);" << endl
         << ">> " << to_string(acc.nTests) << " unit test(s);" << endl
         << ">> " << to_string(acc.nFailures) << " error(s); " << endl
         << endl;
+
+    return EXIT_SUCCESS;
 }

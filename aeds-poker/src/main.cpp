@@ -29,36 +29,7 @@ int getMatchedCountNumber(const int counts[CARDS_PER_SUIT], const int n) {
 
 
 
-/**
- * 02 pairs.
- * - In case of a tie, the one with the highest pair card wins;
- * - If it remains, the one with the highest lowest pair card wins;
- * - If it remains, the one with the highest card wins;
- */
-// bool isTwoPairs(const Card cards[CARDS_PER_HAND], int *pairNumber, int *pairNumber2) {
-    
-//     bool isHigherHand = (
-//         isRoyalStraightFlush(cards)
-//         || isStraightFlush(cards)
-//         || isFourOfKind(cards, NULL)
-//         || isFullHouse(cards, NULL, NULL)
-//         || isFlush(cards, NULL)
-//         || isStraight(cards)
-//         || isThreeOfKind(cards, NULL)
-//     );
 
-//     if (isHigherHand)
-//         return false;
-
-//     // Check if we have any pairs
-//     int counts[CARDS_PER_SUIT] = { 0 };
-//     if (!hasNOfAKind(2, cards, pairNumber, counts))
-//         return false;
-    
-//     // Check if we have a 2nd pair
-//     Card* cardsCopy = removeCardFromHand(cards, *pairNumber);
-//     return hasNOfAKind(2, cardsCopy, pairNumber2, NULL);
-// }
 
 /**
  * 01 pair.
