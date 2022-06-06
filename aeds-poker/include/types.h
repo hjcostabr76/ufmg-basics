@@ -94,6 +94,7 @@ typedef struct {
     Play* plays;
     int nWinners;
     string *winners;
+    int pot;
 } Round;
 
 typedef struct {

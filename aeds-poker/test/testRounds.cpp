@@ -13,6 +13,7 @@ using namespace std;
 #define N_PLAYERS 11
 
 const int BID = 50;
+const int POT = N_PLAYERS*BID + 100*(1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10);
 const int CASH_INIT = 2000;
 const string FILE_INPUT = "./test/tst_input_round.txt";
 
@@ -52,9 +53,9 @@ int main(void) {
     Player players[N_PLAYERS];
     memcpy(players, initialPlayers, N_PLAYERS * sizeof(Player));
 
-    cout << "-- <<< Players (initial) >>> --" << endl << endl;
-    for (int i = 0; i < N_PLAYERS; i++)
-        dbgPrintPlayer(players[i]);
+    // cout << "-- <<< Players (initial) >>> --" << endl << endl;
+    // for (int i = 0; i < N_PLAYERS; i++)
+    //     dbgPrintPlayer(players[i]);
 
     try {
 
@@ -66,16 +67,25 @@ int main(void) {
         // Parse round
         Round round = readRound(readingStream);
         parseRound(round, players, N_PLAYERS);
-        dbgPrintRound(round);
+        // dbgPrintRound(round);
 
         for (int i = 0; i < N_PLAYERS; i++) {
             
-            bool isOK = (i == N_PLAYERS - 1)
-                ? players[i].money == (CASH_INIT - BID)
-                : players[i].money == (CASH_INIT - BID - (i + 1)*100);
+            int playerNumber = i + 1;
+            int expectedMoney = CASH_INIT - BID;
+            
+            bool havePlayed = playerNumber != N_PLAYERS;
+            if (havePlayed)
+                expectedMoney -= playerNumber*100;
+            
+            bool isWinner = playerNumber == 10;
+            if (isWinner)
+                expectedMoney += POT;
 
-            cout << endl << players[i].name << (isOK ? ": OK..." : ": Error!") << endl;
-            dbgPrintPlayer(players[i]);
+            bool isOK = players[i].money == expectedMoney;
+
+            cout << endl << players[i].name << (isOK ? ": OK..." : ": Error!") << " [expected: " << to_string(expectedMoney) << "]" << endl;
+            // dbgPrintPlayer(players[i]);
         }
 
         cout << endl << "-- THE END --" << endl;

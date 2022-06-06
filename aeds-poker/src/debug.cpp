@@ -29,7 +29,7 @@ string dbgGetPlayPrint(const Play play) {
 
 string dbgGetRoundPrint(const Round round) {
     
-    string print = "[round] blind: '" + to_string(round.blind) + "'; nPlays: '" + to_string(round.nPlays) + "'; ";
+    string print = "[round] blind: '" + to_string(round.blind) + "'; nPlays: '" + to_string(round.nPlays) + "'; pot: '" + to_string(round.pot) + "'; ";
     
     if (round.nWinners) {
         print += "nWinners: '" + to_string(round.nWinners) + "'; winners: ";

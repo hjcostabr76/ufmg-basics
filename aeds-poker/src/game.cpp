@@ -104,14 +104,17 @@ void sortCards(Card cards[CARDS_PER_HAND]) {
 }
 
 int getHandScore(const Hand hand) {
-    return (
+
+    int score = (
         20*hand.type
         + 10*hand.fourOfKindNumber
         + 5*hand.threeOfKindNumber
         + 2*hand.pairNumber
         + 2*hand.pairNumber2
-        + hand.highest
     );
+
+    score += hand.highest == CARD_NUM_ACE ? CARD_NUM_KING + 1 : hand.highest;
+    return score;
 }
 
 void countCards(const Card cards[CARDS_PER_HAND], int counts[CARDS_PER_SUIT]) {
@@ -164,12 +167,24 @@ void removeCardFromHand(Card cards[CARDS_PER_HAND], const int numberToRemove) {
 }
 
 Hand getEmptyHand(void) {
-    Hand hand = { HAND_HIGHER_CARD, {}, ' ', 0, 0, 0, 0, 0, 0 };
+
+    Hand hand;
+    
+    hand.type = HAND_HIGHER_CARD;
+    hand.suit = ' ';
+    hand.fourOfKindNumber = 0;
+    hand.threeOfKindNumber = 0;
+    hand.pairNumber = 0;
+    hand.pairNumber2 = 0;
+    hand.score = 0;
+    hand.highest = 0;
+
     hand.cards[0] = { ' ', 0 };
     hand.cards[1] = { ' ', 0 };
     hand.cards[2] = { ' ', 0 };
     hand.cards[3] = { ' ', 0 };
     hand.cards[4] = { ' ', 0 };
+    
     return hand;
 }
 
@@ -182,6 +197,15 @@ int getHighestCard(Card cards[CARDS_PER_HAND]) {
             highest = cards[i].number;
     }
     return highest;
+}
+
+int findPlayerPosition(Player players[], const string name, const int nPlayers) {
+    for (int j = 0; j < nPlayers; j++) {
+        bool isMatch = name.compare(players[j].name) == 0;
+        if (isMatch)
+            return j;
+    }
+    return -1;
 }
 
 /**
@@ -367,9 +391,8 @@ bool isOnePair(const Card cards[CARDS_PER_HAND], int *pairCard) {
 void parseRound(Round &round, Player* players, const int nPlayers) {
 
     // Compute the round pot (all players contribute)
-    int pot = 0;
     for (int i = 0; i < nPlayers; i++) {
-        pot += round.blind;
+        round.pot += round.blind;
         players[i].money -= round.blind;
     }
 
@@ -377,24 +400,19 @@ void parseRound(Round &round, Player* players, const int nPlayers) {
     for (int i = 0; i < round.nPlays; i++) {
 
         Play *play = &round.plays[i];
-        Player *player = NULL;
 
         // Determine player
-        for (int j = 0; j < nPlayers; j++) {
-            bool isMatch = play->playerName.compare(players[j].name) == 0;
-            if (isMatch) {
-                cout << endl << "found player: '" + players[j].name + "'" << endl;
-                player = &players[j];
-                break;
-            }
-        }
-
-        if (player == NULL)
+        int pos = findPlayerPosition(players, play->playerName, nPlayers);
+        if (pos == -1)
             throw runtime_error("Couldn't find player named '" + play->playerName + "'");
+
+        Player *player = &players[pos];
+        // cout << endl << "found player: '" + player->name + "'" << endl;
 
         // Compute this play
         detectHand(play->hand);
         player->money -= play->bid;
+        round.pot += play->bid;
     }
 
     // Determine winner(s)
@@ -406,10 +424,23 @@ void parseRound(Round &round, Player* players, const int nPlayers) {
         round.nWinners++;
         i++;
     }
-
+    
+    int prize = round.pot / round.nWinners;
+    // cout << endl << "prize: '" << to_string(prize) << "'" << endl;
     round.winners = (string*)malloc(round.nWinners * BUF_SIZE);
-    for (int i = 0; i < round.nWinners; i++)
+
+    // Add the prize into the winners account
+    for (int i = 0; i < round.nWinners; i++) {
+
+        int pos = findPlayerPosition(players, round.plays[i].playerName, nPlayers);
+        if (pos == -1)
+            throw runtime_error("Couldn't find player named '" + round.plays[i].playerName + "'");
+
         round.winners[i] = round.plays[i].playerName;
+        Player *winner = &players[pos];
+        winner->money += prize;
+        dbgPrintPlayer(*winner);
+    }
 }
 
 void detectHand(Hand &hand) {
@@ -577,6 +608,7 @@ Play readPlay(ifstream &inputStream) {
     play.bid = stoi(bid);
     
     // Pick play cards
+    play.hand = getEmptyHand();
     for (int i = 0; i < CARDS_PER_HAND; i++) {
         token = tokens[nTokens - CARDS_PER_HAND + i];
         play.hand.cards[i].suit = token[token.length() - 1];
@@ -596,6 +628,7 @@ Round readRound(ifstream &inputStream) {
     // Read round parameters
     Round round;
     round.nWinners = 0;
+    round.pot = 0;
 
     getline(lineStream, aux, ' ');
     round.nPlays = stoi(aux);
