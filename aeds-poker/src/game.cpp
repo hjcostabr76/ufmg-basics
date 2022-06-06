@@ -388,61 +388,6 @@ bool isOnePair(const Card cards[CARDS_PER_HAND], int *pairCard) {
  * ------------------------------------------------
  */
 
-void parseRound(Round &round, Player* players, const int nPlayers) {
-
-    // Compute the round pot (all players contribute)
-    for (int i = 0; i < nPlayers; i++) {
-        round.pot += round.blind;
-        players[i].money -= round.blind;
-    }
-
-    // Compute all plays
-    for (int i = 0; i < round.nPlays; i++) {
-
-        Play *play = &round.plays[i];
-
-        // Determine player
-        int pos = findPlayerPosition(players, play->playerName, nPlayers);
-        if (pos == -1)
-            throw runtime_error("Couldn't find player named '" + play->playerName + "'");
-
-        Player *player = &players[pos];
-        // cout << endl << "found player: '" + player->name + "'" << endl;
-
-        // Compute this play
-        detectHand(play->hand);
-        player->money -= play->bid;
-        round.pot += play->bid;
-    }
-
-    // Determine winner(s)
-    sortPlays(round.plays, round.nPlays);
-
-    int i = 0;
-    round.nWinners = 1;
-    while (round.plays[i].hand.score == round.plays[i + 1].hand.score && (i + 1) < round.nPlays) {
-        round.nWinners++;
-        i++;
-    }
-    
-    int prize = round.pot / round.nWinners;
-    // cout << endl << "prize: '" << to_string(prize) << "'" << endl;
-    round.winners = (string*)malloc(round.nWinners * BUF_SIZE);
-
-    // Add the prize into the winners account
-    for (int i = 0; i < round.nWinners; i++) {
-
-        int pos = findPlayerPosition(players, round.plays[i].playerName, nPlayers);
-        if (pos == -1)
-            throw runtime_error("Couldn't find player named '" + round.plays[i].playerName + "'");
-
-        round.winners[i] = round.plays[i].playerName;
-        Player *winner = &players[pos];
-        winner->money += prize;
-        dbgPrintPlayer(*winner);
-    }
-}
-
 void detectHand(Hand &hand) {
 
     // Validate
@@ -567,6 +512,60 @@ void detectHand(Hand &hand) {
     hand.score = getHandScore(hand);
     
     dbgStep("Hand match: " + HAND_NAMES[hand.type] + "! ( highest: " + to_string(hand.highest) + " / score: " + to_string(hand.score) + ")");
+}
+
+void parseRound(Round &round, Player* players, const int nPlayers) {
+
+    // Compute the round pot (all players contribute)
+    for (int i = 0; i < nPlayers; i++) {
+        round.pot += round.blind;
+        players[i].money -= round.blind;
+    }
+
+    // Compute all plays
+    for (int i = 0; i < round.nPlays; i++) {
+
+        Play *play = &round.plays[i];
+
+        // Determine player
+        int pos = findPlayerPosition(players, play->playerName, nPlayers);
+        if (pos == -1)
+            throw runtime_error("Couldn't find player named '" + play->playerName + "'");
+
+        Player *player = &players[pos];
+
+        // Compute this play
+        detectHand(play->hand);
+        player->money -= play->bid;
+        round.pot += play->bid;
+    }
+
+    // Determine winner(s)
+    sortPlays(round.plays, round.nPlays);
+
+    int i = 0;
+    round.nWinners = 1;
+    while (round.plays[i].hand.score == round.plays[i + 1].hand.score && (i + 1) < round.nPlays) {
+        round.nWinners++;
+        i++;
+    }
+    
+    int prize = round.pot / round.nWinners;
+    // cout << endl << "prize: '" << to_string(prize) << "'" << endl;
+    round.winners = (string*)malloc(round.nWinners * BUF_SIZE);
+
+    // Add the prize into the winners account
+    for (int i = 0; i < round.nWinners; i++) {
+
+        int pos = findPlayerPosition(players, round.plays[i].playerName, nPlayers);
+        if (pos == -1)
+            throw runtime_error("Couldn't find player named '" + round.plays[i].playerName + "'");
+
+        round.winners[i] = round.plays[i].playerName;
+        Player *winner = &players[pos];
+        winner->money += prize;
+        dbgPrintPlayer(*winner);
+    }
 }
 
 /**
