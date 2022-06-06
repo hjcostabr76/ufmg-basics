@@ -12,6 +12,7 @@ using namespace std;
 
 #define DEBUG_ENABLE true
 
+#define BUF_SIZE 512
 #define HAND_COUNT 10
 
 #define CARDS_PER_HAND 5
@@ -31,13 +32,13 @@ const string HAND_NAMES[HAND_COUNT] = {
     "Higher card",
     "Pair",
     "Two Pairs",
-    "Three of a kind...",
-    "Straight...",
-    "Flush...",
-    "Full House...",
-    "Four of a kind...",
-    "Straight Flush...",
-    "Royal Straight Flush...",
+    "Three of a kind",
+    "Straight",
+    "Flush",
+    "Full House",
+    "Four of a kind",
+    "Straight Flush",
+    "Royal Straight Flush",
 };
 
 /**
@@ -65,21 +66,34 @@ typedef struct {
 } Card;
 
 typedef struct {
+    HandEnum type;
+    Card cards[CARDS_PER_HAND];
+    char suit;
+    int fourOfKindNumber;
+    int threeOfKindNumber;
+    int pairNumber;
+    int pairNumber2;
+    int score;
+    int highest;
+} Hand;
+
+typedef struct {
     int bid;
     string playerName;
-    Card cards[CARDS_PER_HAND];
+    Hand hand;
 } Play;
 
 typedef struct {
     int money;
     string name;
-    Play* plays;
 } Player;
 
 typedef struct {
     int blind;
     int nPlays;
     Play* plays;
+    int nWinners;
+    string *winners;
 } Round;
 
 typedef struct {
@@ -87,14 +101,3 @@ typedef struct {
     int initialAmount;
     Round* rounds;
 } Game;
-
-typedef struct {
-    HandEnum type;
-    char suit;
-    int fourOfKindNumber;
-    int threeOfKindNumber;
-    int pairNumber;
-    int pairNumber2;
-    int highest;
-    int score;
-} Hand;

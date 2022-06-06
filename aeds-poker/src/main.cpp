@@ -55,30 +55,4 @@ int main(int argc, char const *argv[]) {
 
     // Fim da execucao
     return statusOK ? EXIT_SUCCESS : EXIT_FAILURE;
-
-    // if (this->writingStream.is_open()) {
-    //     this->writingStream.close();
-    //     return;
-    // }
-
-    // if (!this->writingStream.good())
-    //     throw runtime_error("Falha ao tentar abrir arquivo de armazenamento para escrita (" + this->getStorageFileName() + ")");
-
-
-    // // Prepara controller de usuarios
-    // auto rejTypeService = make_shared<RejectTypeService>();
-    // auto regTypeDao = make_shared<RejectTypeDAO>(rejTypeService);
-    // auto userService = make_shared<UserService>(regTypeDao);
-    // auto userDao = make_shared<UserDAO>(userService);
-    // auto userController = make_shared<UserController>(userDao, userService, rejTypeService, regTypeDao);
-
-    // // Exibir menu principal
-    // vector<MenuItemSet> menuItems;
-
-    // menuItems.push_back(MenuItemSet("Login", make_shared<LoginController>(userDao, userService)));
-    // menuItems.push_back(MenuItemSet("Cadastro", userController, ControllerActionEnum::CREATE));
-    // menuItems.push_back(MenuItemSet("Sair", nullptr));
-
-    // MenuController menuController("Menu Inicial", menuItems);
-    // menuController.runAction();
 }

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stdlib.h>
 #include <string.h>
 #include <memory>
@@ -57,6 +58,19 @@ bool isSameSuit(const Card cards[CARDS_PER_HAND], char *suit) {
     return true;
 }
 
+void sortPlays(Play *plays, const int nPLays) {
+    for (int i = 0; i < nPLays; i++) {
+        for (int j = 1; j < nPLays; j++) {
+            Play prev = plays[j - 1];
+            Play current = plays[j];
+            if (current.hand.score > prev.hand.score) {
+                plays[j - 1] = current;
+                plays[j] = prev;
+            }
+        }
+    }
+}
+
 void sortCards(Card cards[CARDS_PER_HAND]) {
     
     // Do the regular sort
@@ -91,12 +105,12 @@ void sortCards(Card cards[CARDS_PER_HAND]) {
 
 int getHandScore(const Hand hand) {
     return (
-        hand.type
-        + 5*hand.fourOfKindNumber
-        + 4*hand.threeOfKindNumber
-        + 3*hand.pairNumber
+        20*hand.type
+        + 10*hand.fourOfKindNumber
+        + 5*hand.threeOfKindNumber
+        + 2*hand.pairNumber
         + 2*hand.pairNumber2
-        + 1*hand.highest
+        + hand.highest
     );
 }
 
@@ -150,133 +164,24 @@ void removeCardFromHand(Card cards[CARDS_PER_HAND], const int numberToRemove) {
 }
 
 Hand getEmptyHand(void) {
-    return { HAND_HIGHER_CARD, ' ', 0, 0, 0, 0, 0, 0 };
+    Hand hand = { HAND_HIGHER_CARD, {}, ' ', 0, 0, 0, 0, 0, 0 };
+    hand.cards[0] = { ' ', 0 };
+    hand.cards[1] = { ' ', 0 };
+    hand.cards[2] = { ' ', 0 };
+    hand.cards[3] = { ' ', 0 };
+    hand.cards[4] = { ' ', 0 };
+    return hand;
 }
 
-Hand getHand(const Card handCards[CARDS_PER_HAND]) {
-
-    // Validate
+int getHighestCard(Card cards[CARDS_PER_HAND]) {
+    int highest = 0;
     for (int i = 0; i < CARDS_PER_HAND; i++) {
-        Card card = handCards[i];
-        
-        if (!isValidCardNumber(card.number))
-            throw range_error("Invalid card number: " + to_string(card.number));
-        
-        if (!isValidSuit(card.suit)) {
-            string aux;
-            throw range_error("Invalid card suit: " + (aux + card.suit));
-        }
+        if (cards[i].number == CARD_NUM_ACE)
+            return CARD_NUM_ACE;
+        if (cards[i].number > highest)
+            highest = cards[i].number;
     }
-
-    // Make a sorted copy of provided cards
-    Card cards[CARDS_PER_HAND];
-    memcpy(cards, handCards, CARDS_PER_HAND * sizeof(Card));
-    sortCards(cards);
-
-    // Detect hand
-    bool haveMatch = false;
-    Hand hand = getEmptyHand();
-    
-    char suit;
-    int pairNumber = 0;
-    int pairNumber2 = 0;
-    int fourOfKindNumber = 0;
-    int threeOfKindNumber = 0;
-
-    if (!haveMatch) {
-        HandEnum type = HAND_ROYAL_STRAIGHT_FLUSH;
-        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
-        if (isRoyalStraightFlush(cards, &suit)) {
-            haveMatch = true;
-            hand.type = type;
-            hand.suit = suit;
-        }
-    }
-
-    if (!haveMatch) {
-        HandEnum type = HAND_STRAIGHT_FLUSH;
-        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
-        if (isStraightFlush(cards, &suit)) {
-            haveMatch = true;
-            hand.type = type;
-            hand.suit = suit;
-        }
-    }
-
-    if (!haveMatch) {
-        HandEnum type = HAND_4_KIND;
-        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
-        if (isFourOfKind(cards, &fourOfKindNumber)) {
-            haveMatch = true;
-            hand.type =  type;
-            hand.fourOfKindNumber =  fourOfKindNumber;
-        }
-    }
-
-    if (!haveMatch) {
-        HandEnum type = HAND_FULL_HOUSE;
-        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
-        if (isFullHouse(cards, &threeOfKindNumber, &pairNumber)) {
-            haveMatch = true;
-            hand.type = type;
-            hand.pairNumber =  pairNumber;
-            hand.threeOfKindNumber =  threeOfKindNumber;
-        }
-    }
-
-    if (!haveMatch) {
-        HandEnum type = HAND_FLUSH;
-        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
-        if (isFlush(cards, &suit)) {
-            haveMatch = true;
-            hand.type = type;
-            hand.suit = suit;
-        }
-    }
-
-    if (!haveMatch) {
-        HandEnum type = HAND_STRAIGHT;
-        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
-        if (isStraight(cards)) {
-            haveMatch = true;
-            hand.type = type;
-        }
-    }
-
-    if (!haveMatch) {
-        HandEnum type = HAND_3_KIND;
-        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
-        if (isThreeOfKind(cards, &threeOfKindNumber)) {
-            haveMatch = true;
-            hand.type = type;
-            hand.threeOfKindNumber = threeOfKindNumber;
-        }
-    }
-
-    if (!haveMatch) {
-        HandEnum type = HAND_2_PAIRS;
-        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
-        if (isTwoPairs(cards, &pairNumber, &pairNumber2)) {
-            haveMatch = true;
-            hand.type = type;
-            hand.pairNumber = pairNumber;
-            hand.pairNumber2 = pairNumber2;
-        }
-    }
-
-    if (!haveMatch) {
-        HandEnum type = HAND_PAIR;
-        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
-        if (isOnePair(cards, &pairNumber)) {
-            haveMatch = true;
-            hand.type = type;
-            hand.pairNumber = pairNumber;
-        }
-    }
-
-    dbgStep("Hand match: " + HAND_NAMES[hand.type] + "!");
-    hand.score = getHandScore(hand);
-    return hand;
+    return highest;
 }
 
 /**
@@ -455,6 +360,186 @@ bool isOnePair(const Card cards[CARDS_PER_HAND], int *pairCard) {
 
 /**
  * ------------------------------------------------
+ * == Game actions ================================
+ * ------------------------------------------------
+ */
+
+void parseRound(Round &round, Player* players, const int nPlayers) {
+
+    // Compute the round pot (all players contribute)
+    int pot = 0;
+    for (int i = 0; i < nPlayers; i++) {
+        pot += round.blind;
+        players[i].money -= round.blind;
+    }
+
+    // Compute all plays
+    for (int i = 0; i < round.nPlays; i++) {
+
+        Play *play = &round.plays[i];
+        Player *player = NULL;
+
+        // Determine player
+        for (int j = 0; j < nPlayers; j++) {
+            bool isMatch = play->playerName.compare(players[j].name) == 0;
+            if (isMatch) {
+                cout << endl << "found player: '" + players[j].name + "'" << endl;
+                player = &players[j];
+                break;
+            }
+        }
+
+        if (player == NULL)
+            throw runtime_error("Couldn't find player named '" + play->playerName + "'");
+
+        // Compute this play
+        detectHand(play->hand);
+        player->money -= play->bid;
+    }
+
+    // Determine winner(s)
+    sortPlays(round.plays, round.nPlays);
+
+    int i = 0;
+    round.nWinners = 1;
+    while (round.plays[i].hand.score == round.plays[i + 1].hand.score && (i + 1) < round.nPlays) {
+        round.nWinners++;
+        i++;
+    }
+
+    round.winners = (string*)malloc(round.nWinners * BUF_SIZE);
+    for (int i = 0; i < round.nWinners; i++)
+        round.winners[i] = round.plays[i].playerName;
+}
+
+void detectHand(Hand &hand) {
+
+    // Validate
+    for (int i = 0; i < CARDS_PER_HAND; i++) {
+        Card card = hand.cards[i];
+        
+        if (!isValidCardNumber(card.number))
+            throw range_error("Invalid card number: " + to_string(card.number));
+        
+        if (!isValidSuit(card.suit)) {
+            string aux;
+            throw range_error("Invalid card suit: " + (aux + card.suit));
+        }
+    }
+
+    // Make a sorted copy of provided cards
+    Card cards[CARDS_PER_HAND];
+    memcpy(cards, hand.cards, CARDS_PER_HAND * sizeof(Card));
+    sortCards(cards);
+
+    // Detect hand
+    bool haveMatch = false;
+    
+    char suit;
+    int pairNumber = 0;
+    int pairNumber2 = 0;
+    int fourOfKindNumber = 0;
+    int threeOfKindNumber = 0;
+
+    if (!haveMatch) {
+        HandEnum type = HAND_ROYAL_STRAIGHT_FLUSH;
+        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
+        if (isRoyalStraightFlush(cards, &suit)) {
+            haveMatch = true;
+            hand.type = type;
+            hand.suit = suit;
+        }
+    }
+
+    if (!haveMatch) {
+        HandEnum type = HAND_STRAIGHT_FLUSH;
+        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
+        if (isStraightFlush(cards, &suit)) {
+            haveMatch = true;
+            hand.type = type;
+            hand.suit = suit;
+        }
+    }
+
+    if (!haveMatch) {
+        HandEnum type = HAND_4_KIND;
+        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
+        if (isFourOfKind(cards, &fourOfKindNumber)) {
+            haveMatch = true;
+            hand.type =  type;
+            hand.fourOfKindNumber =  fourOfKindNumber;
+        }
+    }
+
+    if (!haveMatch) {
+        HandEnum type = HAND_FULL_HOUSE;
+        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
+        if (isFullHouse(cards, &threeOfKindNumber, &pairNumber)) {
+            haveMatch = true;
+            hand.type = type;
+            hand.pairNumber =  pairNumber;
+            hand.threeOfKindNumber =  threeOfKindNumber;
+        }
+    }
+
+    if (!haveMatch) {
+        HandEnum type = HAND_FLUSH;
+        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
+        if (isFlush(cards, &suit)) {
+            haveMatch = true;
+            hand.type = type;
+            hand.suit = suit;
+        }
+    }
+
+    if (!haveMatch) {
+        HandEnum type = HAND_STRAIGHT;
+        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
+        if (isStraight(cards)) {
+            haveMatch = true;
+            hand.type = type;
+        }
+    }
+
+    if (!haveMatch) {
+        HandEnum type = HAND_3_KIND;
+        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
+        if (isThreeOfKind(cards, &threeOfKindNumber)) {
+            haveMatch = true;
+            hand.type = type;
+            hand.threeOfKindNumber = threeOfKindNumber;
+        }
+    }
+
+    if (!haveMatch) {
+        HandEnum type = HAND_2_PAIRS;
+        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
+        if (isTwoPairs(cards, &pairNumber, &pairNumber2)) {
+            haveMatch = true;
+            hand.type = type;
+            hand.pairNumber = pairNumber;
+            hand.pairNumber2 = pairNumber2;
+        }
+    }
+
+    if (!haveMatch) {
+        HandEnum type = HAND_PAIR;
+        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
+        if (isOnePair(cards, &pairNumber)) {
+            haveMatch = true;
+            hand.type = type;
+            hand.pairNumber = pairNumber;
+        }
+    }
+
+    hand.highest = getHighestCard(cards);
+    hand.score = getHandScore(hand);
+    
+    dbgStep("Hand match: " + HAND_NAMES[hand.type] + "! ( highest: " + to_string(hand.highest) + " / score: " + to_string(hand.score) + ")");
+}
+
+/**
+ * ------------------------------------------------
  * == INPUT PARSERS ===============================
  * ------------------------------------------------
  */
@@ -480,12 +565,11 @@ Play readPlay(ifstream &inputStream) {
 
     // Pick player name
     Play play;
-    string playerName = "";
-    
+    play.playerName = "";
     for (int i = 0; i < nTokens - CARDS_PER_HAND - 1; i++) {
-        if (playerName.size())
-            playerName += " ";
-        playerName += tokens[i];
+        if (play.playerName.size())
+            play.playerName += " ";
+        play.playerName += tokens[i];
     }
 
     // Pick play bid
@@ -495,8 +579,8 @@ Play readPlay(ifstream &inputStream) {
     // Pick play cards
     for (int i = 0; i < CARDS_PER_HAND; i++) {
         token = tokens[nTokens - CARDS_PER_HAND + i];
-        play.cards[i].suit = token[token.length() - 1];
-        play.cards[i].number = stoi(token.substr(0, token.length() - 1));
+        play.hand.cards[i].suit = token[token.length() - 1];
+        play.hand.cards[i].number = stoi(token.substr(0, token.length() - 1));
     }
 
     return play;
@@ -511,6 +595,8 @@ Round readRound(ifstream &inputStream) {
 
     // Read round parameters
     Round round;
+    round.nWinners = 0;
+
     getline(lineStream, aux, ' ');
     round.nPlays = stoi(aux);
     getline(lineStream, aux, ' ');

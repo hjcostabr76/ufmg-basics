@@ -19,8 +19,11 @@ bool isThreeOfKind(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber);
 bool isTwoPairs(const Card cards[CARDS_PER_HAND], int *pairNumber, int *pairNumber2);
 bool isOnePair(const Card cards[CARDS_PER_HAND], int *pairCard);
 
+/** -- Game actions  -------------- */
+
 Hand getEmptyHand(void);
-Hand getHand(const Card cards[CARDS_PER_HAND]);
+void detectHand(Hand &hand);
+void parseRound(Round &round, Player* players, const int nPlayers);
 
 /** -- Input parsers -------------- */
 
