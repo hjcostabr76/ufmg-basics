@@ -7,8 +7,11 @@ main: obj/poker.o obj/game.o obj/debug.o
 test_hands: obj/testHands.o obj/game.o obj/debug.o
 	$(CC) $(CFLAGS) -o bin/testHands obj/testHands.o obj/game.o obj/debug.o
 
-test_input: obj/testInput.o obj/game.o obj/debug.o
-	$(CC) $(CFLAGS) -o bin/testInput obj/testInput.o obj/game.o obj/debug.o
+test_plays: obj/testPlays.o obj/game.o obj/debug.o
+	$(CC) $(CFLAGS) -o bin/testPlays obj/testPlays.o obj/game.o obj/debug.o
+
+test_rounds: obj/testRounds.o obj/game.o obj/debug.o
+	$(CC) $(CFLAGS) -o bin/testRounds obj/testRounds.o obj/game.o obj/debug.o
 
 #################################################################################
 
@@ -26,8 +29,11 @@ obj/game.o: src/game.cpp include/types.h include/game.h include/debug.h
 obj/testHands.o: test/testHands.cpp include/types.h include/game.h include/debug.h
 	$(CC) $(CFLAGS) -c test/testHands.cpp -o obj/testHands.o
 
-obj/testInput.o: test/testInput.cpp include/types.h include/game.h include/debug.h
-	$(CC) $(CFLAGS) -c test/testInput.cpp -o obj/testInput.o
+obj/testPlays.o: test/testPlays.cpp include/types.h include/game.h include/debug.h
+	$(CC) $(CFLAGS) -c test/testPlays.cpp -o obj/testPlays.o
+
+obj/testRounds.o: test/testRounds.cpp include/types.h include/game.h include/debug.h
+	$(CC) $(CFLAGS) -c test/testRounds.cpp -o obj/testRounds.o
 
 clean:
 	rm -rf obj/* bin/*

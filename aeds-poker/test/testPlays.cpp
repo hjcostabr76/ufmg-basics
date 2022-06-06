@@ -7,8 +7,8 @@
 
 using namespace std;
 
-#define N_LINES = 3
-const string FILE_INPUT = "./test/tst_input.txt";
+#define N_LINES 3
+const string FILE_INPUT = "./test/tst_input_play.txt";
 
 int main(void) {
     
@@ -24,7 +24,7 @@ int main(void) {
             throw runtime_error("Failure as trying to read input file");
 
         // TODO...
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < N_LINES; i++) {
             Play play = readPlay(readingStream);
             cout << "One play read..." << endl;
         }
