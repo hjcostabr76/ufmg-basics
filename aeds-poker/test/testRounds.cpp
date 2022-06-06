@@ -10,23 +10,12 @@
 using namespace std;
 
 #define N_ROUNDS 1
-#define N_PLAYERS 11
+#define N_PLAYERS 13
 
 const int BID = 50;
-const int POT = N_PLAYERS*BID + 100*(1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10);
+const int POT = N_PLAYERS*BID + 100*(1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11 + 12);
 const int CASH_INIT = 2000;
 const string FILE_INPUT = "./test/tst_input_round.txt";
-
-// E2 P9 O4 C5 E6 // HAND_HIGHER_CARD
-// E2 P2 O4 C5 E6 // HAND_PAIR
-// E2 P2 O4 C4 E6 // HAND_2_PAIRS
-// E2 P2 O2 C4 E6 // HAND_3_KIND
-// E2 P3 O4 C5 E6 // HAND_STRAIGHT
-// E2 E3 E9 E7 E5 // HAND_FLUSH
-// E2 P2 O2 C7 E7 // HAND_FULL_HOUSE
-// E2 P2 O2 C2 E7 // HAND_4_KIND
-// C1 C2 C3 C4 C5 // HAND_STRAIGHT_FLUSH
-// C10 C11 C12 C13 C1 // HAND_ROYAL_STRAIGHT_FLUSH
 
 Player getPlayerForTesting(const int n) {
     Player p;
@@ -38,24 +27,70 @@ Player getPlayerForTesting(const int n) {
     return p;
 }
 
-int main(void) {
-    
-    cout << endl << "-- <<< TEST >>> <<< TEST >>> <<< TEST >>> --" << endl << endl;
-
-    ifstream readingStream;
-    bool statusOK = true;
-
-    // Set players list
-    Player initialPlayers[N_PLAYERS];
-    for (int i = 0; i < N_PLAYERS; i++)
-        initialPlayers[i] = getPlayerForTesting(i);
+bool testRoundOK(Round round) {
 
     Player players[N_PLAYERS];
-    memcpy(players, initialPlayers, N_PLAYERS * sizeof(Player));
+    for (int i = 0; i < N_PLAYERS; i++)
+        players[i] = getPlayerForTesting(i);
+    
+    parseRound(round, players, N_PLAYERS);
+    // dbgPrintRound(round);
 
-    // cout << "-- <<< Players (initial) >>> --" << endl << endl;
-    // for (int i = 0; i < N_PLAYERS; i++)
-    //     dbgPrintPlayer(players[i]);
+    bool isTestOK = true;
+    for (int i = 0; i < N_PLAYERS; i++) {
+        
+        int playerNumber = i + 1;
+        int expectedMoney = CASH_INIT - BID;
+        
+        bool havePlayed = playerNumber != N_PLAYERS;
+        if (havePlayed)
+            expectedMoney -= playerNumber*100;
+        
+        bool isWinner = playerNumber == 10 || playerNumber == 11 || playerNumber == 12;
+        if (isWinner)
+            expectedMoney += POT / 3;
+
+        bool isOK = players[i].money == expectedMoney;
+        isTestOK = isTestOK && isOK;
+
+        cout << endl << "[test]" << players[i].name << (isOK ? ": OK..." : ": Error!") << " [expected: " << to_string(expectedMoney) << "]" << endl;
+        // dbgPrintPlayer(players[i]);
+    }
+
+    return isTestOK;
+}
+
+bool testSanitizationError(Round round) {
+    
+    Player players[N_PLAYERS];
+    for (int i = 0; i < N_PLAYERS; i++)
+        players[i] = getPlayerForTesting(i);   
+
+    bool isTestOK = false;
+    players[11].money = 0;
+
+    try {
+        parseRound(round, players, N_PLAYERS);
+
+    } catch (range_error &error) {
+        isTestOK = true;
+        cout << "[test] Error (what we expect): '" << error.what() << "'" << endl;
+    }
+
+    return isTestOK;
+}
+
+int main(void) {
+    
+    cout << endl
+        << "--------------------------------------------" << endl
+        << "-- <<< TEST >>> <<< TEST >>> <<< TEST >>> --" << endl
+        << endl;
+
+    ifstream readingStream;
+    
+    bool statusOK = true;
+    bool isTestOK = true;
 
     try {
 
@@ -63,32 +98,18 @@ int main(void) {
         readingStream = ifstream(FILE_INPUT);
         if (!readingStream.good())
             throw runtime_error("Failure as trying to read input file");
+        
+        Round roundRaw = readRound(readingStream);
 
-        // Parse round
-        Round round = readRound(readingStream);
-        parseRound(round, players, N_PLAYERS);
-        // dbgPrintRound(round);
+        // Test valid round input
+        Round round1;
+        memcpy(&round1, &roundRaw, sizeof(Round));
+        isTestOK = isTestOK && testRoundOK(round1);
 
-        for (int i = 0; i < N_PLAYERS; i++) {
-            
-            int playerNumber = i + 1;
-            int expectedMoney = CASH_INIT - BID;
-            
-            bool havePlayed = playerNumber != N_PLAYERS;
-            if (havePlayed)
-                expectedMoney -= playerNumber*100;
-            
-            bool isWinner = playerNumber == 10;
-            if (isWinner)
-                expectedMoney += POT;
-
-            bool isOK = players[i].money == expectedMoney;
-
-            cout << endl << players[i].name << (isOK ? ": OK..." : ": Error!") << " [expected: " << to_string(expectedMoney) << "]" << endl;
-            // dbgPrintPlayer(players[i]);
-        }
-
-        cout << endl << "-- THE END --" << endl;
+        Round round2;
+        memcpy(&round2, &roundRaw, sizeof(Round));
+        isTestOK = isTestOK && testSanitizationError(round2);
+        
 
     } catch (exception &error) {
         statusOK = false;
@@ -99,6 +120,14 @@ int main(void) {
 
     if (readingStream.is_open())
         readingStream.close();
+
+    // Finish testing...
+    cout << endl << "--------------------------------------------" << endl;
+    if (isTestOK)
+        cout << "-- <<< TEST OK >>> TEST OK <<< TEST OK >>> --" << endl;
+    else
+        cout << "-- <<< TESTS FAILED >>> <<< TESTS FAILED >>> --" << endl;
+    cout << endl << "--------------------------------------------" << endl;
 
     return statusOK ? EXIT_SUCCESS : EXIT_FAILURE;
 }

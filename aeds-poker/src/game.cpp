@@ -516,10 +516,19 @@ void detectHand(Hand &hand) {
 
 void parseRound(Round &round, Player* players, const int nPlayers) {
 
+    int nBrokePLayers = 0;
+    string *brokePlayerNames = (string*)malloc(nPlayers * BUF_SIZE);
+
     // Compute the round pot (all players contribute)
     for (int i = 0; i < nPlayers; i++) {
-        round.pot += round.blind;
-        players[i].money -= round.blind;
+        bool canAfford = players[i].money >= round.blind;
+        if (canAfford) {
+            players[i].money -= round.blind;
+            round.pot += round.blind;
+        } else {
+            nBrokePLayers++;
+            brokePlayerNames[nBrokePLayers] = players[i].name;
+        }
     }
 
     // Compute all plays
@@ -531,8 +540,17 @@ void parseRound(Round &round, Player* players, const int nPlayers) {
         int pos = findPlayerPosition(players, play->playerName, nPlayers);
         if (pos == -1)
             throw runtime_error("Couldn't find player named '" + play->playerName + "'");
-
+        
         Player *player = &players[pos];
+
+        // Check if player can afford it
+        bool isBroke = false;
+        for (int j = 0; j < nBrokePLayers; j++)
+            isBroke = brokePlayerNames[j].compare(player->name) == 0;
+        
+        isBroke = isBroke || player->money < play->bid;
+        if (isBroke)
+            throw range_error("'" + player->name + "' couldn't afford to play...");
 
         // Compute this play
         detectHand(play->hand);
@@ -564,7 +582,7 @@ void parseRound(Round &round, Player* players, const int nPlayers) {
         round.winners[i] = round.plays[i].playerName;
         Player *winner = &players[pos];
         winner->money += prize;
-        dbgPrintPlayer(*winner);
+        // dbgPrintPlayer(*winner);
     }
 }
 
