@@ -264,8 +264,15 @@ Hand getHand(const Card handCards[CARDS_PER_HAND]) {
         }
     }
 
-    // if (isOnePair(cards, pairNumber))
-    //     return HAND_PAIR;
+    if (!haveMatch) {
+        HandEnum type = HAND_PAIR;
+        dbgStep("Parsing hand for being: " + HAND_NAMES[type] + "...");
+        if (isOnePair(cards, &pairNumber)) {
+            haveMatch = true;
+            hand.type = type;
+            hand.pairNumber = pairNumber;
+        }
+    }
 
     dbgStep("Hand match: " + HAND_NAMES[hand.type] + "!");
     hand.score = getHandScore(hand);
@@ -299,7 +306,7 @@ bool isStraightFlush(const Card cards[CARDS_PER_HAND], char *suit) {
  * - If it remains tied the one with the higher fifth card wins;
  */
 bool isFourOfKind(const Card cards[CARDS_PER_HAND], int *fourOfKindNumber) {
-    bool isHigherHand = false;// isRoyalStraightFlush(cards, NULL) || isStraightFlush(cards, NULL);
+    bool isHigherHand =  isRoyalStraightFlush(cards, NULL) || isStraightFlush(cards, NULL);
     return !isHigherHand && hasNOfAKind(4, cards, fourOfKindNumber, NULL, NULL);
 }
 
@@ -309,6 +316,15 @@ bool isFourOfKind(const Card cards[CARDS_PER_HAND], int *fourOfKindNumber) {
  * - If it remains tied, the higher pair wins;
  */
 bool isFullHouse(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber, int *pairNumber) {
+
+    bool isHigherHand = (
+        isRoyalStraightFlush(cards, NULL)
+        || isStraightFlush(cards, NULL)
+        || isFourOfKind(cards, NULL)
+    );
+
+    if (isHigherHand)
+        return false;
 
     // Check the 03 of a kind part
     if (threeOfKindNumber == NULL)
@@ -331,7 +347,15 @@ bool isFullHouse(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber, int *
  * - In case of a tie the one with the highest card wins;
  */
 bool isFlush(const Card cards[CARDS_PER_HAND], char *suit) {
-    return isSameSuit(cards, suit);
+
+    bool isHigherHand = (
+        isRoyalStraightFlush(cards, NULL)
+        || isStraightFlush(cards, NULL)
+        || isFourOfKind(cards, NULL)
+        || isFullHouse(cards, NULL, NULL)
+    );
+
+    return !isHigherHand && isSameSuit(cards, suit);
 }
 
 /**
@@ -339,7 +363,16 @@ bool isFlush(const Card cards[CARDS_PER_HAND], char *suit) {
  * - In case of a tie, the one with highest card wins;
  */
 bool isStraight(const Card cards[CARDS_PER_HAND]) {
-    return isSequence(cards);
+
+    bool isHigherHand = (
+        isRoyalStraightFlush(cards, NULL)
+        || isStraightFlush(cards, NULL)
+        || isFourOfKind(cards, NULL)
+        || isFullHouse(cards, NULL, NULL)
+        || isFlush(cards, NULL)
+    );
+
+    return !isHigherHand && isSequence(cards);
 }
 
 /**
@@ -348,7 +381,17 @@ bool isStraight(const Card cards[CARDS_PER_HAND]) {
  * - If it remains, the one with the highest card wins;
  */
 bool isThreeOfKind(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber) {
-    return hasNOfAKind(3, cards, threeOfKindNumber, NULL, NULL);
+
+    bool isHigherHand = (
+        isRoyalStraightFlush(cards, NULL)
+        || isStraightFlush(cards, NULL)
+        || isFourOfKind(cards, NULL)
+        || isFullHouse(cards, NULL, NULL)
+        || isFlush(cards, NULL)
+        || isStraight(cards)
+    );
+
+    return !isHigherHand && hasNOfAKind(3, cards, threeOfKindNumber, NULL, NULL);
 }
 
 /**
@@ -358,9 +401,25 @@ bool isThreeOfKind(const Card cards[CARDS_PER_HAND], int *threeOfKindNumber) {
  * - If it remains, the one with the highest card wins;
  */
 bool isTwoPairs(const Card cards[CARDS_PER_HAND], int *pairNumber, int *pairNumber2) {
+
+    bool isHigherHand = (
+        isRoyalStraightFlush(cards, NULL)
+        || isStraightFlush(cards, NULL)
+        || isFourOfKind(cards, NULL)
+        || isFullHouse(cards, NULL, NULL)
+        || isFlush(cards, NULL)
+        || isStraight(cards)
+        || isThreeOfKind(cards, NULL)
+    );
+
+    if (isHigherHand)
+        return false;
     
     // Check if we have any pairs
     int counts[CARDS_PER_SUIT] = { 0 };
+    if (pairNumber == NULL)
+        pairNumber = (int*)malloc(sizeof(int));
+
     if (!hasNOfAKind(2, cards, pairNumber, NULL, counts))
         return false;
     
@@ -368,8 +427,30 @@ bool isTwoPairs(const Card cards[CARDS_PER_HAND], int *pairNumber, int *pairNumb
     Card cardsCopy[CARDS_PER_HAND];
     memcpy(cardsCopy, cards, CARDS_PER_HAND * sizeof(Card));
     removeCardFromHand(cardsCopy, *pairNumber);
-
+    
     return hasNOfAKind(2, cardsCopy, pairNumber2, NULL, NULL);
+}
+
+/**
+ * 01 pair.
+ * - In case of a tie, the one with the highest pair card wins;
+ * - If it remains, the one with the highest lowest pair card wins;
+ * - If it remains, the one with the highest card wins;
+ */
+bool isOnePair(const Card cards[CARDS_PER_HAND], int *pairCard) {
+
+    bool isHigherHand = (
+        isRoyalStraightFlush(cards, NULL)
+        || isStraightFlush(cards, NULL)
+        || isFourOfKind(cards, NULL)
+        || isFullHouse(cards, NULL, NULL)
+        || isFlush(cards, NULL)
+        || isStraight(cards)
+        || isThreeOfKind(cards, NULL)
+        || isTwoPairs(cards, NULL, NULL)
+    );
+
+    return !isHigherHand && hasNOfAKind(2, cards, pairCard, NULL, NULL);
 }
 
 /**

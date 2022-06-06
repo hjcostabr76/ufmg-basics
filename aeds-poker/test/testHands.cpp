@@ -23,6 +23,13 @@ typedef struct {
  * ------------------------------------------------
  */
 
+int factorial(int number) {
+    int fact = number;
+    while (--number)
+        fact += number;
+    return fact;
+}
+
 /**
  * TODO: 2022-06-03 - Find out what to do with the score
  */
@@ -190,9 +197,8 @@ TestResult testRoyalStraightFlush(void) {
 TestResult testStraightFlush(void) {
 
     int n = -1;
-    int nTests = SUITS_COUNT + 9 + 2;
     bool isVerbose = false;
-    HandTest tests[nTests];
+    HandTest tests[SUITS_COUNT + 9 + 2];
 
     /** == VALID: Must for any suit ===================== */
 
@@ -272,15 +278,14 @@ TestResult testStraightFlush(void) {
     tests[n].cards[3] = { suit, 4 };
     tests[n].cards[4] = { suit, 6 };
 
-    return testManyHands(HAND_NAMES[HAND_STRAIGHT_FLUSH], tests, nTests);
+    return testManyHands(HAND_NAMES[HAND_STRAIGHT_FLUSH], tests, n + 1);
 }
 
 TestResult testFourOfKind(void) {
 
     int n = -1;
-    int nTests = SUITS_COUNT + CARD_NUM_KING + CARDS_PER_HAND;
     bool isVerbose = false;
-    HandTest tests[nTests];
+    HandTest tests[SUITS_COUNT + CARD_NUM_KING + CARDS_PER_HAND];
 
     // Must fit for any suit
     char suit;
@@ -350,7 +355,7 @@ TestResult testFourOfKind(void) {
         tests[n].cards[i].number = fourOfKindNumber - 1;
     }
 
-    return testManyHands(HAND_NAMES[HAND_4_KIND], tests, nTests);
+    return testManyHands(HAND_NAMES[HAND_4_KIND], tests, n + 1);
 }
 
 
@@ -362,9 +367,8 @@ TestResult testFourOfKind(void) {
 TestResult testFullHouse(void) {
 
     int n = -1;
-    int nTests = CARD_NUM_KING + 10;
     bool isVerbose = false;
-    HandTest tests[nTests];
+    HandTest tests[CARD_NUM_KING + factorial(CARDS_PER_HAND - 1)];
     
     // Must fit for any number
     for (int i = 1; i <= CARD_NUM_KING; i++) {
@@ -416,7 +420,7 @@ TestResult testFullHouse(void) {
         }   
     }
 
-    return testManyHands(HAND_NAMES[HAND_FULL_HOUSE], tests, nTests);
+    return testManyHands(HAND_NAMES[HAND_FULL_HOUSE], tests, n + 1);
 }
 
 /**
@@ -426,9 +430,8 @@ TestResult testFullHouse(void) {
 TestResult testFlush(void) {
 
     int n = -1;
-    int nTests = SUITS_COUNT + 1;
     bool isVerbose = false;
-    HandTest tests[nTests];
+    HandTest tests[SUITS_COUNT + 1];
 
     // Must fit for any suit
     char suit;
@@ -466,7 +469,7 @@ TestResult testFlush(void) {
     tests[n].cards[3] = { SUIT_DIAMONDS, 4 };
     tests[n].cards[4] = { SUIT_CLUBS, 9 };
 
-    return testManyHands(HAND_NAMES[HAND_FLUSH], tests, nTests);
+    return testManyHands(HAND_NAMES[HAND_FLUSH], tests, n + 1);
 }
 
 /**
@@ -476,9 +479,8 @@ TestResult testFlush(void) {
 TestResult testStraight(void) {
 
     int n = -1;
-    int nTests = 3;
     bool isVerbose = false;
-    HandTest tests[nTests];
+    HandTest tests[3];
 
     // New Test...
     n++;
@@ -520,7 +522,7 @@ TestResult testStraight(void) {
     tests[n].cards[3] = { SUIT_HEARTS, 13 };
     tests[n].cards[4] = { SUIT_HEARTS, 11 };
 
-    return testManyHands(HAND_NAMES[HAND_STRAIGHT], tests, nTests);
+    return testManyHands(HAND_NAMES[HAND_STRAIGHT], tests, n + 1);
 }
 
 
@@ -532,9 +534,8 @@ TestResult testStraight(void) {
 TestResult testThreeOfKind(void) {
 
     int n = -1;
-    int nTests = CARD_NUM_KING + 10 + 1;
     bool isVerbose = false;
-    HandTest tests[nTests];
+    HandTest tests[CARD_NUM_KING + factorial(CARDS_PER_HAND - 1) + 1];
 
     // Must fit for any number
     for (int i = 1; i <= CARD_NUM_KING; i++) {
@@ -614,7 +615,7 @@ TestResult testThreeOfKind(void) {
     tests[n].cards[3] = { SUIT_SPADES, threeOfKindNumber };
     tests[n].cards[4] = { SUIT_HEARTS, threeOfKindNumber };
 
-    return testManyHands(HAND_NAMES[HAND_FULL_HOUSE], tests, nTests);
+    return testManyHands(HAND_NAMES[HAND_FULL_HOUSE], tests, n + 1);
 }
 
 /**
@@ -626,9 +627,8 @@ TestResult testThreeOfKind(void) {
 TestResult testTwoPairs(void) {
 
     int n = -1;
-    int nTests = 78 + 1;
     bool isVerbose = false;
-    HandTest tests[nTests];
+    HandTest tests[factorial(CARD_NUM_KING - 1) + 1];
 
     // Must fit for combinations at any position
     for (int pairNumber1 = 1; pairNumber1 <= CARD_NUM_KING; pairNumber1++) {
@@ -638,7 +638,6 @@ TestResult testTwoPairs(void) {
             if (pairNumber1 >= pairNumber2)
                 continue;
 
-            // foo++;
             int otherNumber = 1;
             while (otherNumber == pairNumber1 || otherNumber == pairNumber2)
                 otherNumber++;
@@ -678,23 +677,83 @@ TestResult testTwoPairs(void) {
     tests[n].cards[3] = { SUIT_DIAMONDS, threeOfKindNumber };
     tests[n].cards[4] = { SUIT_SPADES, pairNumber1 };
 
-    return testManyHands(HAND_NAMES[HAND_2_PAIRS], tests, nTests);
+    return testManyHands(HAND_NAMES[HAND_2_PAIRS], tests, n + 1);
 }
 
-// int main(int argc, char const *argv[]) {
+/**
+ * 01 pair.
+ * - In case of a tie, the one with the highest pair card wins;
+ * - If it remains, the one with the highest lowest pair card wins;
+ * - If it remains, the one with the highest card wins;
+ */
+TestResult testOnePair(void) {
+
+    int n = -1;
+    bool isVerbose = false;
+    HandTest tests[CARD_NUM_KING + 2];
+
+    // Must fit for any number
+    for (int pairNumber = 1; pairNumber <= CARD_NUM_KING; pairNumber++) {
+
+        // Make the numbers we're gonna need        
+        int otherNumber1 = pairNumber < (CARD_NUM_KING - 1) ? pairNumber + 1 : pairNumber - 1;
+        int otherNumber2 = pairNumber < (CARD_NUM_KING - 2) ? pairNumber + 2 : pairNumber - 2;
+        int otherNumber3 = pairNumber < (CARD_NUM_KING - 3) ? pairNumber + 3 : pairNumber - 3;
+
+        // Build the test
+        n++;
+        tests[n].title = "Must fit for pair of '" + to_string(pairNumber) + "'";
+        tests[n].isVerbose = isVerbose;
+        tests[n].hand = getEmptyHand();
+        tests[n].hand.type = HAND_PAIR;
+        tests[n].hand.pairNumber = pairNumber;
+
+        tests[n].cards[0] = { SUIT_HEARTS, pairNumber };
+        tests[n].cards[1] = { SUIT_CLUBS, pairNumber };
+        tests[n].cards[2] = { SUIT_DIAMONDS, otherNumber1 };
+        tests[n].cards[3] = { SUIT_DIAMONDS, otherNumber2 };
+        tests[n].cards[4] = { SUIT_SPADES, otherNumber3 };
+    }
+
+    n++;
+    int pairNumber = 1;
+    int pairNumber2 = 13;
+    int otherNumber = 6;
+
+    tests[n].title = "Must not fit as two pairs";
+    tests[n].isVerbose = isVerbose;
+    tests[n].hand = getEmptyHand();
+    tests[n].hand.type = HAND_2_PAIRS;
+    tests[n].hand.pairNumber = pairNumber;
+    tests[n].hand.pairNumber2 = pairNumber2;
+
+    tests[n].cards[0] = { SUIT_SPADES, pairNumber };
+    tests[n].cards[1] = { SUIT_CLUBS, pairNumber2 };
+    tests[n].cards[2] = { SUIT_HEARTS, otherNumber };
+    tests[n].cards[3] = { SUIT_DIAMONDS, pairNumber2 };
+    tests[n].cards[4] = { SUIT_SPADES, pairNumber };
+
+    n++;
+    pairNumber = 1;
+    int threeOfKindNumber = 13;
+
+    tests[n].title = "Must not fit as full house";
+    tests[n].isVerbose = isVerbose;
+    tests[n].hand = getEmptyHand();
+    tests[n].hand.type = HAND_FULL_HOUSE;
+    tests[n].hand.pairNumber = pairNumber;
+    tests[n].hand.threeOfKindNumber = threeOfKindNumber;
+
+    tests[n].cards[0] = { SUIT_SPADES, pairNumber };
+    tests[n].cards[1] = { SUIT_CLUBS, threeOfKindNumber };
+    tests[n].cards[2] = { SUIT_HEARTS, threeOfKindNumber };
+    tests[n].cards[3] = { SUIT_DIAMONDS, threeOfKindNumber };
+    tests[n].cards[4] = { SUIT_SPADES, pairNumber };
+
+    return testManyHands(HAND_NAMES[HAND_PAIR], tests, n + 1);
+}
+
 int main() {
-
-    // Validate input
-    // if (argc != 2)
-    //     throw invalid_argument("You must specify one main hand type code for the test (1 ~ 10)");
-
-    // string cmdCode;
-    // cmdCode += argv[1];
-    // int temp = stoi(cmdCode);
-    // if (temp < 1 || temp > 10)
-    //     throw invalid_argument("Invalid hand type code '" + cmdCode + "'. Valid are: (1 ~ 10)");
-
-    // HandEnum mainTestHand = (HandEnum)(temp - 1);
 
     // Notify tests start
     std::cout << endl
@@ -744,6 +803,11 @@ int main() {
 
     nGroups++;
     aux = testTwoPairs();
+    acc.nTests += aux.nTests;
+    acc.nFailures += aux.nFailures;
+
+    nGroups++;
+    aux = testOnePair();
     acc.nTests += aux.nTests;
     acc.nFailures += aux.nFailures;
 

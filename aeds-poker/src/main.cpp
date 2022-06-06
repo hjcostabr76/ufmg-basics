@@ -7,56 +7,6 @@
 
 using namespace std;
 
-
-
-
-
-int getMatchedCountNumber(const int counts[CARDS_PER_SUIT], const int n) {
-    for (int i = 0; i < CARDS_PER_SUIT; i++) {
-        if (counts[i] == n)
-            return i + 1;
-    }
-    return 0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * 01 pair.
- * - In case of a tie, the one with the highest pair card wins;
- * - If it remains, the one with the highest lowest pair card wins;
- * - If it remains, the one with the highest card wins;
- */
-// bool isOnePair(const Card cards[CARDS_PER_HAND], int &pairCard) {
-
-//     bool isHigherHand = (
-//         isRoyalStraightFlush(cards)
-//         || isStraightFlush(cards)
-//         || isFourOfKind(cards, NULL)
-//         || isFullHouse(cards, NULL, NULL)
-//         || isFlush(cards, NULL)
-//         || isStraight(cards)
-//         || isThreeOfKind(cards, NULL)
-//         || isTwoPairs(cards, NULL, NULL)
-//     );
-
-//     if (isHigherHand)
-//         return false;
-
-//     pairCard = 0;
-//     return hasNOfAKind(2, cards, &pairCard, NULL);
-// }
-
 /**
  * TODO: 2022-06-03 - ADD Hand detection tests
  * TODO: 2022-06-03 - ADD Tied hands comparison
