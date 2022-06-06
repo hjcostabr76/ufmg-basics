@@ -461,22 +461,44 @@ bool isOnePair(const Card cards[CARDS_PER_HAND], int *pairCard) {
 
 Play readPlay(ifstream &inputStream) {
 
-    string aux;
+    // Extract line tokens
+    const int maxTokens = 10;
+    string tokens[maxTokens];
+    
     string line;
     getline(inputStream, line);
     stringstream lineStream(line);
 
-    Play play;
-    getline(lineStream, play.playerName, ' ');
-    getline(lineStream, aux, ' ');
-    play.bid = stoi(aux);
-
-    for (int i = 0; i < CARDS_PER_HAND; i++) {
-        getline(lineStream, aux, ' ');
-        play.cards[i].suit = aux[aux.length() - 1];
-        play.cards[i].number = stoi(aux.substr(0, aux.length() - 1));
+    string token;
+    int nTokens = 0;
+    while (getline(lineStream, token, ' ')) {
+        tokens[nTokens] = token;
+        nTokens++;
+        if (nTokens > maxTokens)
+            break;
     }
+
+    // Pick player name
+    Play play;
+    string playerName = "";
     
+    for (int i = 0; i < nTokens - CARDS_PER_HAND - 1; i++) {
+        if (playerName.size())
+            playerName += " ";
+        playerName += tokens[i];
+    }
+
+    // Pick play bid
+    string bid = tokens[nTokens - CARDS_PER_HAND - 1];
+    play.bid = stoi(bid);
+    
+    // Pick play cards
+    for (int i = 0; i < CARDS_PER_HAND; i++) {
+        token = tokens[nTokens - CARDS_PER_HAND + i];
+        play.cards[i].suit = token[token.length() - 1];
+        play.cards[i].number = stoi(token.substr(0, token.length() - 1));
+    }
+
     return play;
 }
 

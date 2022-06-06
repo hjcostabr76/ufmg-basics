@@ -1,0 +1,3 @@
+Giovanni 100 6O 3P 10E 11O 1O
+Wagner 100 6O 3P 10E 11O 1O
+Isaac Newton 100 6O 3P 10E 11O 1O
