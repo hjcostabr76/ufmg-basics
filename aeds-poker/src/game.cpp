@@ -630,8 +630,9 @@ void parseRound(Round &round, Player* players, const int nPlayers) {
             throw runtime_error("Couldn't find player named '" + play->playerName + "'");
         
         Player *player = &players[pos];
-        player->money -= winningBid;
-        round.pot += winningBid;
+        int givenValue = play->bid <= winningBid ? play->bid : winningBid;
+        player->money -= givenValue;
+        round.pot += givenValue;
     }
     
     // dbgPrintPlayer(players[0]);
@@ -664,6 +665,11 @@ void consolidateRounds(Game &game) {
         try {
             Round *round = &game.rounds[i];
             parseRound(*round, game.players, game.nPlayers);
+
+            int totalMoney = 0;
+            for (int j = 0; j < game.nPlayers; j++)
+                totalMoney += game.players[j].money;
+            dbgStep("Money after round " + to_string(i + 1) + ": " + to_string(totalMoney));
 
         } catch (range_error &error) {
             dbgStep("Round '" + to_string(i + 1) + "' won't be computed because of sanity verification failure...");
