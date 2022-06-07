@@ -36,13 +36,10 @@ int main(void) {
         // Build game
         int nPlayers = 0;
         Game game = readGame(readingStream);
-        
-        Player players[MAX_PLAYERS];
-        readGamePlayers(game, players, &nPlayers);
 
-        isTestOK = nPlayers == N_PLAYERS;
+        isTestOK = game.nPlayers == N_PLAYERS;
         for (int i = 0; i < nPlayers; i++) {
-            isTestOK = isTestOK && (players[i].money == CASH_INIT);
+            isTestOK = isTestOK && (game.players[i].money == CASH_INIT);
             // dbgPrintPlayer(players[i]);
         }
 

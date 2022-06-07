@@ -612,7 +612,6 @@ void parseRound(Round &round, Player* players, const int nPlayers) {
     sortPlays(round.plays, round.nPlays);
 
     int i = 0;
-    int winningBid = round.plays[0].bid;
     round.nWinners = 1;
     round.winningHand = round.plays[0].hand.type;
 

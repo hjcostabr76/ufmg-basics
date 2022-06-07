@@ -10,7 +10,7 @@ using namespace std;
  * =================================================
  */
 
-#define DEBUG_ENABLE true
+#define DEBUG_ENABLE false
 
 #define BUF_SIZE 512
 #define HAND_COUNT 10

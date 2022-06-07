@@ -12,7 +12,7 @@ const string OUT_FILE = "saida.txt";
 
 int main(int argc, char const *argv[]) {
     
-    cout << endl << "-- POKER system --" << endl << endl;
+    cout << endl << "-- POKER system --" << endl;
 
     ifstream inputStream;
     ofstream outputStream;
@@ -42,7 +42,7 @@ int main(int argc, char const *argv[]) {
         writeResult(game, outputStream);
 
         // All good
-        cout << endl << "-- The End --" << endl;
+        cout << "-- The End --" << endl;
 
     } catch (invalid_argument &error) {
         cout << "Invalid command!" << endl;
