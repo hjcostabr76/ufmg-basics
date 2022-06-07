@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string.h>
+#include <fstream>
 
 #include "../include/types.h"
 #include "../include/game.h"
@@ -7,17 +8,14 @@
 
 using namespace std;
 
-/**
- * TODO: 2022-06-03 - ADD Hand detection tests
- * TODO: 2022-06-03 - ADD Tied hands comparison
- * TODO: 2022-06-03 - ADD Round sanity checks test
- */
+const string OUT_FILE = "saida.txt";
 
 int main(int argc, char const *argv[]) {
     
     cout << endl << "-- POKER system --" << endl << endl;
 
-    ifstream readingStream;
+    ifstream inputStream;
+    ofstream outputStream;
     bool statusOK = true;
 
     try {
@@ -27,16 +25,24 @@ int main(int argc, char const *argv[]) {
             throw invalid_argument("Invalid parameters number");
 
         const string filePath = argv[1];
-        readingStream = ifstream(filePath);
-        if (!readingStream.good())
+        inputStream = ifstream(filePath);
+        if (!inputStream.good())
             throw runtime_error("Failure as trying to read input file");
 
-        // Build game
-        Game game = readGame(readingStream);
-        dbgPrintGame(game);
+        // Parse game
+        Game game = readGame(inputStream);
+        consolidateRounds(game);
+        sortPlayers(game.players, game.nPlayers);
+
+        // Build output
+        outputStream = ofstream(OUT_FILE);
+        if (!outputStream.good())
+            throw runtime_error("Failure as trying to write output file");
+
+        writeResult(game, outputStream);
 
         // All good
-        cout << endl << "FIM" << endl;
+        cout << endl << "-- The End --" << endl;
 
     } catch (invalid_argument &error) {
         cout << "Invalid command!" << endl;
@@ -50,8 +56,10 @@ int main(int argc, char const *argv[]) {
         cout << endl;
     }
 
-    if (readingStream.is_open())
-        readingStream.close();
+    if (inputStream.is_open())
+        inputStream.close();
+    if (outputStream.is_open())
+        outputStream.close();
 
     // Fim da execucao
     return statusOK ? EXIT_SUCCESS : EXIT_FAILURE;

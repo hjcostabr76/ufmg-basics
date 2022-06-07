@@ -35,8 +35,9 @@ bool testRoundOK(Round round) {
     
     parseRound(round, players, N_PLAYERS);
     // dbgPrintRound(round);
+    
+    bool isTestOK = round.nWinners == 3 && round.winningHand == HAND_ROYAL_STRAIGHT_FLUSH && round.pot == POT;
 
-    bool isTestOK = true;
     for (int i = 0; i < N_PLAYERS; i++) {
         
         int playerNumber = i + 1;

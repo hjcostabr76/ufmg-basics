@@ -562,8 +562,7 @@ void detectHand(Hand &hand) {
 }
 
 void parseRound(Round &round, Player* players, const int nPlayers) {
-    // dbgPrintPlayer(players[0]);
-
+    
     int nBrokePLayers = 0;
     string *brokePlayerNames = (string*)malloc(nPlayers * BUF_SIZE);
 
@@ -579,7 +578,7 @@ void parseRound(Round &round, Player* players, const int nPlayers) {
         }
     }
 
-    // Compute plays
+    // Compute all plays
     for (int i = 0; i < round.nPlays; i++) {
 
         Play *play = &round.plays[i];
@@ -605,8 +604,10 @@ void parseRound(Round &round, Player* players, const int nPlayers) {
 
         // Compute this play
         detectHand(play->hand);
+        player->money -= play->bid;
+        round.pot += play->bid;
     }
-        
+
     // Determine winner(s)
     sortPlays(round.plays, round.nPlays);
 
@@ -619,31 +620,12 @@ void parseRound(Round &round, Player* players, const int nPlayers) {
         round.nWinners++;
         i++;
     }
-
-    // Compute pot
-    for (int i = 0; i < round.nPlays; i++) {
-
-        // Determine player
-        Play *play = &round.plays[i];
-        int pos = findPlayerPosition(players, play->playerName, nPlayers);
-        if (pos == -1)
-            throw runtime_error("Couldn't find player named '" + play->playerName + "'");
-        
-        Player *player = &players[pos];
-        int givenValue = play->bid <= winningBid ? play->bid : winningBid;
-        player->money -= givenValue;
-        round.pot += givenValue;
-    }
     
-    // dbgPrintPlayer(players[0]);
-
-    // cout << "<< winningBid: " << to_string(winningBid) << " | pot: " << to_string(round.pot) << endl;
-    int brutePrize = round.pot / round.nWinners;
-    // cout << endl << "brutePrize: '" << to_string(brutePrize) << "'" << endl;
-
-    // Add prize into the winners account
+    round.prize = round.pot / round.nWinners;
+    // cout << endl << "prize: '" << to_string(prize) << "'" << endl;
     round.winners = (string*)malloc(round.nWinners * BUF_SIZE);
 
+    // Add the prize into the winners account
     for (int i = 0; i < round.nWinners; i++) {
 
         int pos = findPlayerPosition(players, round.plays[i].playerName, nPlayers);
@@ -652,12 +634,9 @@ void parseRound(Round &round, Player* players, const int nPlayers) {
 
         round.winners[i] = round.plays[i].playerName;
         Player *winner = &players[pos];
-        winner->money += brutePrize;
+        winner->money += round.prize;
         // dbgPrintPlayer(*winner);
     }
-
-    // dbgPrintPlayer(players[0]);
-    round.prize = brutePrize - round.blind - winningBid;
 }
 
 void consolidateRounds(Game &game) {
