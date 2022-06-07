@@ -3,6 +3,7 @@
 #include <string.h>
 #include <memory>
 #include <sstream>
+#include <fstream>
 
 #include "../include/game.h"
 #include "../include/debug.h"
@@ -58,9 +59,22 @@ bool isSameSuit(const Card cards[CARDS_PER_HAND], char *suit) {
     return true;
 }
 
-void sortPlays(Play *plays, const int nPLays) {
-    for (int i = 0; i < nPLays; i++) {
-        for (int j = 1; j < nPLays; j++) {
+void sortPlayers(Player *players, const int nPlayers) {
+    for (int i = 0; i < nPlayers; i++) {
+        for (int j = 1; j < nPlayers; j++) {
+            Player prev = players[j - 1];
+            Player current = players[j];
+            if (current.money > prev.money) {
+                players[j - 1] = current;
+                players[j] = prev;
+            }
+        }
+    }
+}
+
+void sortPlays(Play *plays, const int nPlays) {
+    for (int i = 0; i < nPlays; i++) {
+        for (int j = 1; j < nPlays; j++) {
             Play prev = plays[j - 1];
             Play current = plays[j];
             if (current.hand.score > prev.hand.score) {
@@ -206,6 +220,39 @@ int findPlayerPosition(Player players[], const string name, const int nPlayers) 
             return j;
     }
     return -1;
+}
+
+void readGamePlayers(Game &game) {
+    game.nPlayers = 0;
+
+    // Search for players among game rounds
+    for (int i = 0; i < game.nRounds; i++) {
+        Round round = game.rounds[i];
+        
+        // Search for players among round plays
+        for (int j = 0; j < round.nPlays; j++) {
+            Play play = round.plays[j];
+            
+            // Check if we already know this one
+            bool isMatch = false;
+            for (int k = 0; k < game.nPlayers; k++) {
+                isMatch = play.playerName.compare(game.players[k].name) == 0;
+                if (isMatch)
+                    break;
+            }
+
+            if (isMatch)
+                continue;
+            
+            if (game.nPlayers >= MAX_PLAYERS)
+                throw runtime_error("Max players reached");
+
+            // Add new found player
+            game.players[game.nPlayers].money = game.initialAmount;
+            game.players[game.nPlayers].name = play.playerName;
+            game.nPlayers = game.nPlayers + 1;
+        }
+    }
 }
 
 /**
@@ -515,6 +562,7 @@ void detectHand(Hand &hand) {
 }
 
 void parseRound(Round &round, Player* players, const int nPlayers) {
+    // dbgPrintPlayer(players[0]);
 
     int nBrokePLayers = 0;
     string *brokePlayerNames = (string*)malloc(nPlayers * BUF_SIZE);
@@ -531,7 +579,7 @@ void parseRound(Round &round, Player* players, const int nPlayers) {
         }
     }
 
-    // Compute all plays
+    // Compute plays
     for (int i = 0; i < round.nPlays; i++) {
 
         Play *play = &round.plays[i];
@@ -552,27 +600,49 @@ void parseRound(Round &round, Player* players, const int nPlayers) {
         if (isBroke)
             throw range_error("'" + player->name + "' couldn't afford to play...");
 
+        if (play->bid <= 0 || play->bid % BID_BASE_VALUE != 0)
+            throw invalid_argument("Bid has to be a positive multiple of 50 ('" + to_string(play->bid) +"' received)");
+
         // Compute this play
         detectHand(play->hand);
-        player->money -= play->bid;
-        round.pot += play->bid;
     }
-
+        
     // Determine winner(s)
     sortPlays(round.plays, round.nPlays);
 
     int i = 0;
+    int winningBid = round.plays[0].bid;
     round.nWinners = 1;
+    round.winningHand = round.plays[0].hand.type;
+
     while (round.plays[i].hand.score == round.plays[i + 1].hand.score && (i + 1) < round.nPlays) {
         round.nWinners++;
         i++;
     }
+
+    // Compute pot
+    for (int i = 0; i < round.nPlays; i++) {
+
+        // Determine player
+        Play *play = &round.plays[i];
+        int pos = findPlayerPosition(players, play->playerName, nPlayers);
+        if (pos == -1)
+            throw runtime_error("Couldn't find player named '" + play->playerName + "'");
+        
+        Player *player = &players[pos];
+        player->money -= winningBid;
+        round.pot += winningBid;
+    }
     
-    int prize = round.pot / round.nWinners;
-    // cout << endl << "prize: '" << to_string(prize) << "'" << endl;
+    // dbgPrintPlayer(players[0]);
+
+    // cout << "<< winningBid: " << to_string(winningBid) << " | pot: " << to_string(round.pot) << endl;
+    int brutePrize = round.pot / round.nWinners;
+    // cout << endl << "brutePrize: '" << to_string(brutePrize) << "'" << endl;
+
+    // Add prize into the winners account
     round.winners = (string*)malloc(round.nWinners * BUF_SIZE);
 
-    // Add the prize into the winners account
     for (int i = 0; i < round.nWinners; i++) {
 
         int pos = findPlayerPosition(players, round.plays[i].playerName, nPlayers);
@@ -581,8 +651,49 @@ void parseRound(Round &round, Player* players, const int nPlayers) {
 
         round.winners[i] = round.plays[i].playerName;
         Player *winner = &players[pos];
-        winner->money += prize;
+        winner->money += brutePrize;
         // dbgPrintPlayer(*winner);
+    }
+
+    // dbgPrintPlayer(players[0]);
+    round.prize = brutePrize - round.blind - winningBid;
+}
+
+void consolidateRounds(Game &game) {
+    for (int i = 0; i < game.nRounds; i++) {
+        try {
+            Round *round = &game.rounds[i];
+            parseRound(*round, game.players, game.nPlayers);
+
+        } catch (range_error &error) {
+            dbgStep("Round '" + to_string(i + 1) + "' won't be computed because of sanity verification failure...");
+        }
+    }
+}
+
+void writeResult(const Game game, ofstream &outFile) { 
+
+    // Write each round result
+    for (int i = 0; i < game.nRounds; i++) {
+        Round round = game.rounds[i];
+        
+        // Summary
+        outFile << to_string(round.nWinners)
+            << " " << to_string(round.prize)
+            << " " << HAND_CODES[round.winningHand]
+            << endl;
+
+        // Winner(s)
+        for (int j = 0; j < round.nWinners; j++)
+            outFile << round.winners[j] << endl;
+    }
+
+    // Write players final balance
+    outFile << "####" << endl;
+
+    for (int i = 0; i < game.nPlayers; i++) {
+        Player player = game.players[i];
+        outFile << player.name << " " << to_string(player.money) << endl;
     }
 }
 
@@ -646,6 +757,8 @@ Round readRound(ifstream &inputStream) {
     Round round;
     round.nWinners = 0;
     round.pot = 0;
+    round.prize = 0;
+    round.winningHand = HAND_HIGHER_CARD;
 
     getline(lineStream, aux, ' ');
     round.nPlays = stoi(aux);
@@ -671,6 +784,9 @@ Game readGame(ifstream &inputStream) {
 
     // Read game parameters
     Game game;
+    game.nPlayers = 0;
+    game.players = (Player*)malloc(MAX_PLAYERS * sizeof(Player));
+
     getline(lineStream, aux, ' ');
     game.nRounds = stoi(aux);
     getline(lineStream, aux, ' ');
@@ -681,38 +797,6 @@ Game readGame(ifstream &inputStream) {
     for (int i = 0; i < game.nRounds; i++)
         game.rounds[i] = readRound(inputStream);
 
+    readGamePlayers(game);
     return game;
-}
-
-void readGamePlayers(const Game game, Player players[MAX_PLAYERS], int *nPlayers) {
-    *nPlayers = 0;
-
-    // Search for players among game rounds
-    for (int i = 0; i < game.nRounds; i++) {
-        Round round = game.rounds[i];
-        
-        // Search for players among round plays
-        for (int j = 0; j < round.nPlays; j++) {
-            Play play = round.plays[j];
-            
-            // Check if we already know this one
-            bool isMatch = false;
-            for (int k = 0; k < *nPlayers; k++) {
-                isMatch = play.playerName.compare(players[k].name) == 0;
-                if (isMatch)
-                    break;
-            }
-
-            if (isMatch)
-                continue;
-            
-            if (*nPlayers >= MAX_PLAYERS)
-                throw runtime_error("Max players reached");
-
-            // Add new found player
-            players[*nPlayers].money = game.initialAmount;
-            players[*nPlayers].name = play.playerName;
-            *nPlayers = *nPlayers + 1;
-        }
-    }
 }

@@ -15,6 +15,7 @@ using namespace std;
 #define BUF_SIZE 512
 #define HAND_COUNT 10
 #define MAX_PLAYERS 20
+#define BID_BASE_VALUE 50
 
 #define CARDS_PER_HAND 5
 #define CARDS_PER_SUIT 13
@@ -40,6 +41,19 @@ const string HAND_NAMES[HAND_COUNT] = {
     "Four of a kind",
     "Straight Flush",
     "Royal Straight Flush",
+};
+
+const string HAND_CODES[HAND_COUNT] = {
+    "HC", // High Card
+    "OP", // Pair
+    "TP", // Two Pairs
+    "TK", // Three of a kind
+    "S",  // Straight
+    "F",  // Flush
+    "FH", // Full House
+    "FK", // Four of a kind
+    "SF", // Straight Flush
+    "RSF",    // Royal Straight Flush
 };
 
 /**
@@ -96,10 +110,14 @@ typedef struct {
     int nWinners;
     string *winners;
     int pot;
+    int prize;
+    HandEnum winningHand;
 } Round;
 
 typedef struct {
     int nRounds;
     int initialAmount;
     Round* rounds;
+    Player* players;
+    int nPlayers;
 } Game;
