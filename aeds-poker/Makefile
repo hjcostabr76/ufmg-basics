@@ -13,6 +13,9 @@ test_plays: obj/testPlays.o obj/game.o obj/debug.o
 test_rounds: obj/testRounds.o obj/game.o obj/debug.o
 	$(CC) $(CFLAGS) -o bin/testRounds obj/testRounds.o obj/game.o obj/debug.o
 
+test_game: obj/testGame.o obj/game.o obj/debug.o
+	$(CC) $(CFLAGS) -o bin/testGame obj/testGame.o obj/game.o obj/debug.o
+
 #################################################################################
 
 obj/poker.o: src/main.cpp include/types.h include/game.h include/debug.h
@@ -34,6 +37,9 @@ obj/testPlays.o: test/testPlays.cpp include/types.h include/game.h include/debug
 
 obj/testRounds.o: test/testRounds.cpp include/types.h include/game.h include/debug.h
 	$(CC) $(CFLAGS) -c test/testRounds.cpp -o obj/testRounds.o
+
+obj/testGame.o: test/testGame.cpp include/types.h include/game.h include/debug.h
+	$(CC) $(CFLAGS) -c test/testGame.cpp -o obj/testGame.o
 
 clean:
 	rm -rf obj/* bin/*

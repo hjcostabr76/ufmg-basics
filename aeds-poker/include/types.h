@@ -14,6 +14,7 @@ using namespace std;
 
 #define BUF_SIZE 512
 #define HAND_COUNT 10
+#define MAX_PLAYERS 20
 
 #define CARDS_PER_HAND 5
 #define CARDS_PER_SUIT 13

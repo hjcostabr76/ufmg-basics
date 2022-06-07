@@ -683,3 +683,36 @@ Game readGame(ifstream &inputStream) {
 
     return game;
 }
+
+void readGamePlayers(const Game game, Player players[MAX_PLAYERS], int *nPlayers) {
+    *nPlayers = 0;
+
+    // Search for players among game rounds
+    for (int i = 0; i < game.nRounds; i++) {
+        Round round = game.rounds[i];
+        
+        // Search for players among round plays
+        for (int j = 0; j < round.nPlays; j++) {
+            Play play = round.plays[j];
+            
+            // Check if we already know this one
+            bool isMatch = false;
+            for (int k = 0; k < *nPlayers; k++) {
+                isMatch = play.playerName.compare(players[k].name) == 0;
+                if (isMatch)
+                    break;
+            }
+
+            if (isMatch)
+                continue;
+            
+            if (*nPlayers >= MAX_PLAYERS)
+                throw runtime_error("Max players reached");
+
+            // Add new found player
+            players[*nPlayers].money = game.initialAmount;
+            players[*nPlayers].name = play.playerName;
+            *nPlayers = *nPlayers + 1;
+        }
+    }
+}

@@ -30,3 +30,4 @@ void parseRound(Round &round, Player* players, const int nPlayers);
 Play readPlay(ifstream &inputStream);
 Round readRound(ifstream &inputStream);
 Game readGame(ifstream &inputStream);
+void readGamePlayers(const Game game, Player players[MAX_PLAYERS], int *nPlayers);
