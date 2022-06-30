@@ -48,6 +48,7 @@ int main() {
         string line;
         string mode = MODE_NONE;
         map<char, int> lexicographyMap;
+        map<string, int> wordsMap;
 
         int i = 0;
         while (getline(inputStream, line)) {
@@ -79,24 +80,39 @@ int main() {
             char *lineCleared = getClearedInput(lineWithNoDoubleSpace);
             printf("\n\t > '%s'", lineCleared);
 
-            if (mode != MODE_ORDER)
-                continue;
-
             int count = 0;
-            const int nLetters = 26;
-            char **letters = strSplit(lineCleared, " ", nLetters, 1, &count);
-
-            printf("\n\nHere comes the alphabet:\n");
-            for (int j = 0; j < count; j++) {
-                printf("'%s' (%d); ", letters[j], j);
-                lexicographyMap.insert(pair<char, int>(letters[j][0], j));
+            if (mode == MODE_ORDER) {
+                const int nLetters = 26;
+                char **letters = strSplit(lineCleared, " ", nLetters, 1, &count);
+                for (int j = 0; j < count; j++) {
+                    const char c = letters[j][0];
+                    lexicographyMap[c] = j;
+                }
+                continue;
             }
+
+            const size_t maxLength = strlen(lineCleared);;
+            char **words = strSplit(lineCleared, " ", maxLength, 1, &count);
+            for (int j = 0; j < count; j++)
+                wordsMap[words[j]]++;
         }
 
+        printf("\n\nHere comes our alphabet:\n");
+        map<char, int>::iterator itrAlpha;
+        for (itrAlpha = lexicographyMap.begin(); itrAlpha != lexicographyMap.end(); ++itrAlpha) {
+            printf("'%c' (%d); ", itrAlpha->first, itrAlpha->second);
+        }
+
+        printf("\n\nHere comes our words counted:\n");
+        map<string, int>::iterator itrWords;
+        for (itrWords = wordsMap.begin(); itrWords != wordsMap.end(); ++itrWords) {
+            printf("\n\t'%s': '%d'", itrWords->first.c_str(), itrWords->second);
+        }
+        
         printf("\n");
-        printf("\nTesting map for '%c': '%d'\n", 'a', lexicographyMap.at('a'));
-        printf("\nTesting map for '%c': '%d'\n", 'x', lexicographyMap.at('x'));
-        printf("\nTesting map for '%c': '%d'\n", 'p', lexicographyMap.at('p'));
+        printf("\nTesting map for '%c': '%d'", 'a', lexicographyMap['a']);
+        printf("\nTesting map for '%c': '%d'", 'x', lexicographyMap.at('x'));
+        printf("\nTesting map for '%c': '%d'", 'p', lexicographyMap.at('p'));
 
         cout << endl;
         cout << "-- The End --" << endl;
