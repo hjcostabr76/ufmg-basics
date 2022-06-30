@@ -1,65 +1,63 @@
-// Quick sort in C++
-
 #include <iostream>
+
 using namespace std;
 
-// function to swap elements
-void swap(int *a, int *b) {
-  int t = *a;
-  *a = *b;
-  *b = t;
+int size = 0;
+void printArray(int array[]) {
+	for (int i = 0; i < size; i++)
+		cout << array[i] << " ";
+	cout << endl;
 }
 
-// function to print the array
-// void printArray(int array[], int size) {
-//   int i;
-//   for (i = 0; i < size; i++)
-// 	cout << array[i] << " ";
-//   cout << endl;
+// void swap(int &a, int &b) {
+// 	int t = a;
+// 	a = b;
+// 	b = t;
 // }
 
-// function to rearrange array (find the partition point)
-int partition(int array[], int low, int high) {
-	
-  // select the rightmost element as pivot
-  int pivot = array[high];
-  
-  // pointer for greater element
-  int i = (low - 1);
-
-  // traverse each element of the array
-  // compare them with the pivot
-  for (int j = low; j < high; j++) {
-	if (array[j] <= pivot) {
-		
-	  // if element smaller than pivot is found
-	  // swap it with the greater element pointed by i
-	  i++;
-	  
-	  // swap element at i with element at j
-	  swap(&array[i], &array[j]);
-	}
-  }
-  
-  // swap pivot with the greater element at i
-  swap(&array[i + 1], &array[high]);
-  
-  // return the partition point
-  return (i + 1);
+void swap(int *a, int *b) {
+	int t = *a;
+	*a = *b;
+	*b = t;
 }
 
-void quickSort(int array[], int low, int high) {
-  if (low < high) {
-	  
-	// find the pivot element such that
-	// elements smaller than pivot are on left of pivot
-	// elements greater than pivot are on righ of pivot
-	int pi = partition(array, low, high);
+/** Rearrange & set partition point (next pivot). */
+void partition(int array[], const int low, const int high, int* partitionPoint) {
 
-	// recursive call on the left of pivot
-	quickSort(array, low, pi - 1);
+	if (array == NULL || partitionPoint == NULL)
+		return;
+	
+	int j = low;
+	int i = low - 1; // Point to greater element
+  	int pivot = array[high]; // Rightmost element
 
-	// recursive call on the right of pivot
-	quickSort(array, pi + 1, high);
-  }
+	for (j = low; j < high; j++) {
+		int &current = array[j];
+		if (current <= pivot) {
+			int &greatest = array[++i];
+			swap(greatest, current);
+		}
+	}
+
+	*partitionPoint = (i + 1);
+	swap(array[*partitionPoint], array[high]);
+}
+
+void sort(int array[], const int low, const int high) {
+	if (low < high) {
+		int pivot = 0; // Set pivot (who's smaller goes left / who's greater goes right)
+		printf("\npivot: '%d'\n", pivot);
+		partition(array, low, high, &pivot);
+		sort(array, low, pivot - 1);	// Rearrange before pivot
+		sort(array, pivot + 1, high);	// Rearrange after pivot
+	}
+}
+
+void quickSort(int array[], const int low, const int high) {
+	size = high - low + 1;
+	cout << endl << "before:" << endl;
+	printArray(array);
+	sort(array, low, high);
+	cout << endl << "after:" << endl;
+	printArray(array);
 }
