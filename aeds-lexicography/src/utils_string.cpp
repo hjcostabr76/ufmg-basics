@@ -448,3 +448,28 @@ void strRemoveAccents(char *str) {
 		}
     }
 }
+
+char* strStripRepeatedChar(const char* input, const char target) {
+	
+	int i = 0;
+	char* cleanInput = (char*)malloc(strlen(input) + 1);
+
+    bool isFound = false;
+	for (size_t j = 0; j < strlen(input); j++) {
+		
+        char c = input[j];
+        if (c == target) {
+            if (isFound) {
+                isFound = false;
+                continue;
+            }
+            isFound = true;
+        } else
+            isFound = false;
+
+        cleanInput[i++] = c;
+	}
+	
+	cleanInput[i] = '\0';
+	return cleanInput;
+}

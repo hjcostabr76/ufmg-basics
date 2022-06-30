@@ -66,3 +66,4 @@ void strToUpper(char *str);
 char* strReplace(char const *src, const char *target, const char *replacer);
 bool strHasSubstring(const char* src, const char *substring, int *nMatches);
 void strRemoveAccents(char *str);
+char* strStripRepeatedChar(const char* input, const char target);

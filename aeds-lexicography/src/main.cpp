@@ -7,9 +7,6 @@
 // #include <memory>
 #include <sstream>
 #include <fstream>
-
-// #include <string.h>
-#include <fstream>
 #include <map>
 
 using namespace std;
@@ -17,85 +14,90 @@ using namespace std;
 const string ID_SEQ_ORDER = "#ORDEM";
 const string ID_SEQ_TXT = "#TEXTO";
 
+const string MODE_NONE = "[__NO MODE__]";
+const string MODE_TEXT = "[text mode]";
+const string MODE_ORDER = "[order mode]";
+
+char* getClearedInput(const char* input) {
+	
+	int i = 0;
+	char* cleanInput = (char*)malloc(strlen(input) + 1);
+
+	for (size_t j = 0; j < strlen(input); j++) {
+        char c = input[j];
+        if (strIsAlphaNumericChar(c))
+            cleanInput[i++] = ::tolower(c);
+	}
+	
+	cleanInput[i] = '\0';
+	return cleanInput;
+}
+
 int main() {
     
     bool statusOK = true;
 
-    // const char target[] = "ar";
-    // const char replacer[] = "REP";
-    
-    // const char foo[] = "altar";
-    // const char *baz = strReplace(foo, target, replacer);
-    // printf("\n(replacing: '%s' -> '%s') | Before: '%s'; After: '%s';", target, replacer, foo, baz);
-
-    // const char bar[] = "armario arriado";
-    // const char *chico = strReplace(bar, target, replacer);
-    // printf("\n(replacing: '%s' -> '%s') | Before: '%s'; After: '%s';", target, replacer, bar, chico);
-
-
-    // const char caray[] = "arquear";
-    // const char *coco = strReplace(caray, target, replacer);
-    // printf("\n(replacing: '%s' -> '%s') | Before: '%s'; After: '%s';", target, replacer, caray, coco);
-    // int nMatches = 0;
-    // const char foo[] = "abaacaate";
-    // strHasSubstring(foo, "aa", &nMatches);
-    // printf("\nfoo: '%s': %d matches;", foo, nMatches);
-
-    // const char bar[] = "abaacate";
-    // strHasSubstring(bar, "aa", &nMatches);
-    // printf("\nbar: '%s': %d matches;", bar, nMatches);
-
-    // const char baz[] = "albatroz";
-    // strHasSubstring(baz, "aa", &nMatches);
-    // printf("\nbaz: '%s': %d matches;", baz, nMatches);
-    
-    int n = 35;
-    char sources[35][30] = {
-        "antesádepois",
-        "antesãdepois",
-        "antesâdepois",
-        "antesêdepois",
-        "antesẽdepois",
-        "antesídepois",
-        "antesìdepois",
-        "antesódepois",
-        "antesòdepois",
-        "antesôdepois",
-        "antesõdepois",
-        "antesúdepois",
-        "antesùdepois",
-        "antesûdepois",
-        "antesçdepois",
-        "antesÁdepois",
-        "antesÀdepois",
-        "antesÃdepois",
-        "antesÂdepois",
-        "antesÉdepois",
-        "antesÈdepois",
-        "antesÊdepois",
-        "antesẼdepois",
-        "antesÍdepois",
-        "antesÌdepois",
-        "antesÓdepois",
-        "antesÒdepois",
-        "antesÔdepois",
-        "antesÕdepois",
-        "antesÚdepois",
-        "antesÙdepois",
-        "antesÛdepois",
-        "antesÇdepois"
-    };
-
+    ifstream inputStream;
     try {
+        
+        // const string filePath = argv[1];
+        inputStream = ifstream("src/__test_1.i");
+        if (!inputStream.good())
+            throw runtime_error("Failure as trying to read input file");
 
-        for (int i = 0; i < n; i++) {
-            char *source = sources[i];
-            printf("\nPIMBA: antes: '%s'; depois: ", source);
-            strRemoveAccents(source);
-            printf("'%s';", source);
+        string line;
+        string mode = MODE_NONE;
+        map<char, int> lexicographyMap;
+
+        int i = 0;
+        while (getline(inputStream, line)) {
+            i++;
+
+            if (line == "") {
+                printf("\n line [%d] is EMPTY!! ['%s']", i, line.c_str());
+                continue;
+            }
+
+            printf("\n line [%d]: '%s'", i, line.c_str());
+
+            char *lineWithNoDoubleSpace = strStripRepeatedChar(line.c_str(), ' ');
+            const bool isOrder = strcmp(lineWithNoDoubleSpace, ID_SEQ_ORDER.c_str()) == 0;
+            bool isText = false;
+            
+            if (isOrder) {
+                mode = MODE_ORDER;
+
+            } else if (strcmp(lineWithNoDoubleSpace, ID_SEQ_TXT.c_str()) == 0) {
+                isText = true;
+                mode = MODE_TEXT;
+            }
+
+            printf("\n\t > '%s'", mode.c_str());
+            if (isOrder || isText)
+                continue;
+
+            char *lineCleared = getClearedInput(lineWithNoDoubleSpace);
+            printf("\n\t > '%s'", lineCleared);
+
+            if (mode != MODE_ORDER)
+                continue;
+
+            int count = 0;
+            const int nLetters = 26;
+            char **letters = strSplit(lineCleared, " ", nLetters, 1, &count);
+
+            printf("\n\nHere comes the alphabet:\n");
+            for (int j = 0; j < count; j++) {
+                printf("'%s' (%d); ", letters[j], j);
+                lexicographyMap.insert(pair<char, int>(letters[j][0], j));
+            }
         }
 
-        // All good
+        printf("\n");
+        printf("\nTesting map for '%c': '%d'\n", 'a', lexicographyMap.at('a'));
+        printf("\nTesting map for '%c': '%d'\n", 'x', lexicographyMap.at('x'));
+        printf("\nTesting map for '%c': '%d'\n", 'p', lexicographyMap.at('p'));
+
         cout << endl;
         cout << "-- The End --" << endl;
 
@@ -107,6 +109,8 @@ int main() {
         cout << endl;
     }
 
-    // Fim da execucao
+    if (inputStream.is_open())
+        inputStream.close();
+
     return statusOK ? EXIT_SUCCESS : EXIT_FAILURE;
 }

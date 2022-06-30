@@ -1,45 +1,18 @@
 CC = g++
 CFLAGS = -W -Wall -g -Wextra
 
-main: obj/poker.o obj/game.o obj/debug.o
-	$(CC) $(CFLAGS) -o bin/poker obj/poker.o obj/game.o obj/debug.o
-
-test_hands: obj/testHands.o obj/game.o obj/debug.o
-	$(CC) $(CFLAGS) -o bin/testHands obj/testHands.o obj/game.o obj/debug.o
-
-test_plays: obj/testPlays.o obj/game.o obj/debug.o
-	$(CC) $(CFLAGS) -o bin/testPlays obj/testPlays.o obj/game.o obj/debug.o
-
-test_rounds: obj/testRounds.o obj/game.o obj/debug.o
-	$(CC) $(CFLAGS) -o bin/testRounds obj/testRounds.o obj/game.o obj/debug.o
-
-test_game: obj/testGame.o obj/game.o obj/debug.o
-	$(CC) $(CFLAGS) -o bin/testGame obj/testGame.o obj/game.o obj/debug.o
+main: obj/utils_debug.o obj/utils_string.o src/main.cpp
+	$(CC) $(CFLAGS) -o bin/lexicography obj/utils_debug.o obj/utils_string.o src/main.cpp
 
 #################################################################################
 
-obj/poker.o: src/main.cpp include/types.h include/game.h include/debug.h
-	$(CC) $(CFLAGS) -c src/main.cpp -o obj/poker.o
+obj/utils_string.o: include/utils_debug.h include/utils_string.h src/utils_string.cpp
+	$(CC) $(CFLAGS) -c src/utils_string.cpp -o obj/utils_string.o
 
-obj/debug.o: src/debug.cpp include/types.h include/debug.h
-	$(CC) $(CFLAGS) -c src/debug.cpp -o obj/debug.o
-
-obj/game.o: src/game.cpp include/types.h include/game.h include/debug.h
-	$(CC) $(CFLAGS) -c src/game.cpp -o obj/game.o
+obj/utils_debug.o: src/utils_debug.cpp include/utils_debug.h
+	$(CC) $(CFLAGS) -c src/utils_debug.cpp -o obj/utils_debug.o
 
 #################################################################################
-
-obj/testHands.o: test/testHands.cpp include/types.h include/game.h include/debug.h
-	$(CC) $(CFLAGS) -c test/testHands.cpp -o obj/testHands.o
-
-obj/testPlays.o: test/testPlays.cpp include/types.h include/game.h include/debug.h
-	$(CC) $(CFLAGS) -c test/testPlays.cpp -o obj/testPlays.o
-
-obj/testRounds.o: test/testRounds.cpp include/types.h include/game.h include/debug.h
-	$(CC) $(CFLAGS) -c test/testRounds.cpp -o obj/testRounds.o
-
-obj/testGame.o: test/testGame.cpp include/types.h include/game.h include/debug.h
-	$(CC) $(CFLAGS) -c test/testGame.cpp -o obj/testGame.o
 
 clean:
 	rm -rf obj/* bin/*
