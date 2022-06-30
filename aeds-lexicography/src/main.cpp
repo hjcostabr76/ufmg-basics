@@ -18,6 +18,32 @@ const string MODE_NONE = "[__NO MODE__]";
 const string MODE_TEXT = "[text mode]";
 const string MODE_ORDER = "[order mode]";
 
+void printLexicography(map<char, int> lexicographyMap) {
+    
+    if (!DEBUG_ENABLE)
+        return;
+    
+    printf("\n\nHere comes our alphabet:");
+    map<char, int>::iterator itrAlpha;
+    for (itrAlpha = lexicographyMap.begin(); itrAlpha != lexicographyMap.end(); ++itrAlpha) {
+        printf("\n\t'%c': %d; ", itrAlpha->first, itrAlpha->second);
+    }
+}
+
+void printWords(map<string, int> wordsMap) {
+    
+    if (!DEBUG_ENABLE)
+        return;
+    
+    printf("\n\nHere comes our words counted:\n");
+    map<string, int>::iterator itrWords;
+    for (itrWords = wordsMap.begin(); itrWords != wordsMap.end(); ++itrWords) {
+        printf("\n\t'%s': '%d'", itrWords->first.c_str(), itrWords->second);
+    }
+}
+
+void parseInput(ifstream &inputStream, map<char, int> &lexicographyMap, map<string, int> &wordsMap);
+
 char* getClearedInput(const char* input) {
 	
 	int i = 0;
@@ -33,6 +59,9 @@ char* getClearedInput(const char* input) {
 	return cleanInput;
 }
 
+/**
+ * TODO: 2022-06-30 - Get file path from cli
+ */
 int main() {
     
     bool statusOK = true;
@@ -45,74 +74,13 @@ int main() {
         if (!inputStream.good())
             throw runtime_error("Failure as trying to read input file");
 
-        string line;
-        string mode = MODE_NONE;
+        // Build maps
         map<char, int> lexicographyMap;
         map<string, int> wordsMap;
-
-        int i = 0;
-        while (getline(inputStream, line)) {
-            i++;
-
-            if (line == "") {
-                printf("\n line [%d] is EMPTY!! ['%s']", i, line.c_str());
-                continue;
-            }
-
-            printf("\n line [%d]: '%s'", i, line.c_str());
-
-            char *lineWithNoDoubleSpace = strStripRepeatedChar(line.c_str(), ' ');
-            const bool isOrder = strcmp(lineWithNoDoubleSpace, ID_SEQ_ORDER.c_str()) == 0;
-            bool isText = false;
-            
-            if (isOrder) {
-                mode = MODE_ORDER;
-
-            } else if (strcmp(lineWithNoDoubleSpace, ID_SEQ_TXT.c_str()) == 0) {
-                isText = true;
-                mode = MODE_TEXT;
-            }
-
-            printf("\n\t > '%s'", mode.c_str());
-            if (isOrder || isText)
-                continue;
-
-            char *lineCleared = getClearedInput(lineWithNoDoubleSpace);
-            printf("\n\t > '%s'", lineCleared);
-
-            int count = 0;
-            if (mode == MODE_ORDER) {
-                const int nLetters = 26;
-                char **letters = strSplit(lineCleared, " ", nLetters, 1, &count);
-                for (int j = 0; j < count; j++) {
-                    const char c = letters[j][0];
-                    lexicographyMap[c] = j;
-                }
-                continue;
-            }
-
-            const size_t maxLength = strlen(lineCleared);;
-            char **words = strSplit(lineCleared, " ", maxLength, 1, &count);
-            for (int j = 0; j < count; j++)
-                wordsMap[words[j]]++;
-        }
-
-        printf("\n\nHere comes our alphabet:\n");
-        map<char, int>::iterator itrAlpha;
-        for (itrAlpha = lexicographyMap.begin(); itrAlpha != lexicographyMap.end(); ++itrAlpha) {
-            printf("'%c' (%d); ", itrAlpha->first, itrAlpha->second);
-        }
-
-        printf("\n\nHere comes our words counted:\n");
-        map<string, int>::iterator itrWords;
-        for (itrWords = wordsMap.begin(); itrWords != wordsMap.end(); ++itrWords) {
-            printf("\n\t'%s': '%d'", itrWords->first.c_str(), itrWords->second);
-        }
+        parseInput(inputStream, lexicographyMap, wordsMap);
         
-        printf("\n");
-        printf("\nTesting map for '%c': '%d'", 'a', lexicographyMap['a']);
-        printf("\nTesting map for '%c': '%d'", 'x', lexicographyMap.at('x'));
-        printf("\nTesting map for '%c': '%d'", 'p', lexicographyMap.at('p'));
+        printLexicography(lexicographyMap);
+        printWords(wordsMap);
 
         cout << endl;
         cout << "-- The End --" << endl;
@@ -129,4 +97,55 @@ int main() {
         inputStream.close();
 
     return statusOK ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
+void parseInput(ifstream &inputStream, map<char, int> &lexicographyMap, map<string, int> &wordsMap) {
+    
+    string line;
+    string mode = MODE_NONE;
+
+    bool isText = false;
+    bool isOrder = false;
+
+    while (getline(inputStream, line)) {
+        if (line == "")
+            continue;
+
+        // Parse input mode
+        char *lineWithNoDoubleSpace = strStripRepeatedChar(line.c_str(), ' ');
+        
+        isText = false;
+        isOrder = strcmp(lineWithNoDoubleSpace, ID_SEQ_ORDER.c_str()) == 0;
+        if (isOrder)
+            mode = MODE_ORDER;
+        else if (strcmp(lineWithNoDoubleSpace, ID_SEQ_TXT.c_str()) == 0) {
+            isText = true;
+            mode = MODE_TEXT;
+        }
+
+        if (isOrder || isText)
+            continue;
+
+        if (mode == MODE_NONE)
+            throw runtime_error("File reading mode undefined");
+
+        // Parse letters order
+        char *lineCleared = getClearedInput(lineWithNoDoubleSpace);
+        int count = 0;
+        if (mode == MODE_ORDER) {
+            const int nLetters = 26;
+            char **letters = strSplit(lineCleared, " ", nLetters, 1, &count);
+            for (int j = 0; j < count; j++) {
+                const char c = letters[j][0];
+                lexicographyMap[c] = j;
+            }
+            continue;
+        }
+
+        // Compute words occurrences
+        const size_t maxLength = strlen(lineCleared);;
+        char **words = strSplit(lineCleared, " ", maxLength, 1, &count);
+        for (int j = 0; j < count; j++)
+            wordsMap[words[j]]++;
+    }
 }
