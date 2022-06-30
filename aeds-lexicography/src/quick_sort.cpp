@@ -11,30 +11,49 @@ void printArray(int array[]) {
 
 // function to swap_bck elements
 void swap(int *a, int *b) {
-  int t = *a;
-  *a = *b;
-  *b = t;
+	int t = *a;
+	*a = *b;
+	*b = t;
 }
 
-int MedianOfThreePartition(int a[],int p, int r) {
-    int x=a[p],y=a[(r-p)/2+p],z=a[r-1],i=p-1,j=r;
-    if (y>x && y<z || y>z && y<x ) x=y;
-    else if (z>x && z<y || z>y && z<x ) x=z;
-    while (1) {
-        do  {j--;} while (a[j] > x);
-        do  {i++;} while (a[i] < x);
-        if  (i < j) swap(&a[i],&a[j]);
-        else return j+1;
+
+void setPartition(int array[], const int low, const int high, int &partition) {
+    
+	// Set pivot in the median of 03 fashion
+	const int first = array[low];
+	const int median = array[(high - low) / 2 + low];
+	const int last = array[high - 1];
+    
+	int pivot = 0;
+	if ((median > first && median < last) || (median > last && median < first))
+		pivot = median;
+    else if ((last > first && last < median) || (last > median && last < first))
+		pivot = last;
+	else
+		pivot = first;
+
+	// Sort
+	int i = low - 1;
+	int j = high;
+
+	while (true) {
+        do  { j--; } while (array[j] > pivot);
+        do  { i++; } while (array[i] < pivot);
+        if  (i < j) swap(&array[i], &array[j]);
+        else break;
     }
+
+	partition = j + 1;
 }
 
 
-void sort(int a[],int start,int end) {
-    int q;
-    if (end-start<2) return;
-    q=MedianOfThreePartition(a,start,end);
-    sort(a,start,q);
-    sort(a,q,end);
+void sort(int array[], int start, int end) {
+	if (end - start >= 2) {
+		int pivot = 0;
+		setPartition(array, start, end, pivot);
+		sort(array, start, pivot);
+		sort(array, pivot, end);
+	}
 }
 
 void quickSort(int array[], const int low, const int high) {
