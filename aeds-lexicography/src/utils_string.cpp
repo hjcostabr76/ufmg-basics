@@ -397,6 +397,7 @@ void strRemoveAccents(char *str) {
     /**
      * 
      * == How each accented char lengths: ==
+	 * 
      * á/2;  ã/2;  â/2;
      * é/2;  è/2;  ê/2;  ẽ/3;
      * í/2;  ì/2;
@@ -419,10 +420,6 @@ void strRemoveAccents(char *str) {
     char lowerFixed[] = "aaaaaaaaeeeeeeeeeiiiioooooooouuuuuucc";
     char upperFixed[] = "AAAAAAAAEEEEEEEEEIIIIOOOOOOOOUUUUUUCC";
 
-    int nDoubleLowerAs = 0; // Does this word really have any double 'a' sequence?
-    strHasSubstring(str, "aa", &nDoubleLowerAs);
-
-    bool isChanged = false;
     for (int i = 0; str[i] != '\0'; i++ ) {
         
         int j = 0;
@@ -439,39 +436,15 @@ void strRemoveAccents(char *str) {
         }
 
         // Try for uppercase chars
-        if (!isFound) {
-            for (j = 0; upperRaw[j] != '\0'; j++ ) {
-                if (c == upperRaw[j]) {
-                    str[i] = upperFixed[j];
-                    isFound = true;
-                    break;
-                }
-            }
-        }
-
-        // Compute this change
-        if (isFound)
-            isChanged = true;
+		if (isFound)
+			continue;
+			
+		for (j = 0; upperRaw[j] != '\0'; j++ ) {
+			if (c == upperRaw[j]) {
+				str[i] = upperFixed[j];
+				isFound = true;
+				break;
+			}
+		}
     }
-
-    // Check if we added any extra a's
-    if (!isChanged)
-        return;
-    
-    int aux = 0;
-    strHasSubstring(str, "aa", &aux);
-    const bool hasExtraLowerAs = aux > nDoubleLowerAs;
-    if (!hasExtraLowerAs)
-        return;
-
-    // Try to clean the mess
-    aux = 0;
-    for (int i = 0; i < (int)strlen(str) - 1; i++) {
-        if (str[i] == 'a' && str[i + 1] == 'a') {
-            i++;
-        }
-        str[aux] = str[i];
-        aux++;
-    }
-    str[aux] = '\0';
 }
