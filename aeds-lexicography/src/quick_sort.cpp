@@ -9,52 +9,36 @@ void printArray(int array[]) {
 	cout << endl;
 }
 
-// void swap(int &a, int &b) {
-// 	int t = a;
-// 	a = b;
-// 	b = t;
-// }
-
+// function to swap_bck elements
 void swap(int *a, int *b) {
-	int t = *a;
-	*a = *b;
-	*b = t;
+  int t = *a;
+  *a = *b;
+  *b = t;
 }
 
-/** Rearrange & set partition point (next pivot). */
-void partition(int array[], const int low, const int high, int* partitionPoint) {
-
-	if (array == NULL || partitionPoint == NULL)
-		return;
-	
-	int j = low;
-	int i = low - 1; // Point to greater element
-  	int pivot = array[high]; // Rightmost element
-
-	for (j = low; j < high; j++) {
-		int &current = array[j];
-		if (current <= pivot) {
-			int &greatest = array[++i];
-			swap(greatest, current);
-		}
-	}
-
-	*partitionPoint = (i + 1);
-	swap(array[*partitionPoint], array[high]);
+int MedianOfThreePartition(int a[],int p, int r) {
+    int x=a[p],y=a[(r-p)/2+p],z=a[r-1],i=p-1,j=r;
+    if (y>x && y<z || y>z && y<x ) x=y;
+    else if (z>x && z<y || z>y && z<x ) x=z;
+    while (1) {
+        do  {j--;} while (a[j] > x);
+        do  {i++;} while (a[i] < x);
+        if  (i < j) swap(&a[i],&a[j]);
+        else return j+1;
+    }
 }
 
-void sort(int array[], const int low, const int high) {
-	if (low < high) {
-		int pivot = 0; // Set pivot (who's smaller goes left / who's greater goes right)
-		printf("\npivot: '%d'\n", pivot);
-		partition(array, low, high, &pivot);
-		sort(array, low, pivot - 1);	// Rearrange before pivot
-		sort(array, pivot + 1, high);	// Rearrange after pivot
-	}
+
+void sort(int a[],int start,int end) {
+    int q;
+    if (end-start<2) return;
+    q=MedianOfThreePartition(a,start,end);
+    sort(a,start,q);
+    sort(a,q,end);
 }
 
 void quickSort(int array[], const int low, const int high) {
-	size = high - low + 1;
+	size = high - low;
 	cout << endl << "before:" << endl;
 	printArray(array);
 	sort(array, low, high);
