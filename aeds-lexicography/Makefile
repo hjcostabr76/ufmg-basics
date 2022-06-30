@@ -1,13 +1,17 @@
 CC = g++
 CFLAGS = -W -Wall -g -Wextra
 
-main: obj/utils_debug.o obj/utils_string.o obj/quick_sort.o src/main.cpp
-	$(CC) $(CFLAGS) -o bin/lexicography obj/utils_debug.o obj/utils_string.o obj/quick_sort.o src/main.cpp
+# main: obj/utils_debug.o obj/utils_string.o obj/quick_sort.o src/main.cpp
+# $(CC) $(CFLAGS) -o bin/lexicography obj/utils_debug.o obj/utils_string.o obj/quick_sort.o src/main.cpp
+
+main: obj/utils_debug.o obj/utils_string.o obj/quick_sort.o obj/quick_sort_bck.o src/main.cpp
+	$(CC) $(CFLAGS) -o bin/lexicography obj/utils_debug.o obj/utils_string.o obj/quick_sort.o obj/quick_sort_bck.o src/main.cpp
 
 #################################################################################
 
-obj/quick_sort.o: include/quick_sort.h src/quick_sort.cpp
+obj/quick_sort.o: include/quick_sort.h src/quick_sort.cpp src/quick_sort_bck.cpp
 	$(CC) $(CFLAGS) -c src/quick_sort.cpp -o obj/quick_sort.o
+	$(CC) $(CFLAGS) -c src/quick_sort_bck.cpp -o obj/quick_sort_bck.o
 
 obj/utils_string.o: include/utils_debug.h include/utils_string.h src/utils_string.cpp
 	$(CC) $(CFLAGS) -c src/utils_string.cpp -o obj/utils_string.o
