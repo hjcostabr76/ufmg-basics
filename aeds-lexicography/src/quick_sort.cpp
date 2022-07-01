@@ -19,8 +19,6 @@ int getMedianOfMPivot(int array[], const int m, const int low, const int high, c
 
 	const int padding = (high - low) / (m - 1);
 	// printf("\n m: '%d'; high: '%d'; low: '%d'; padding: '%d';", m, high, low, padding);
-	// if (!padding)
-	// 	return high;
 
 	int *edgePoints = (int *)malloc(m * sizeof(int));
 	int aux = 0;
@@ -83,27 +81,18 @@ void setPartition(int array[], const int low, const int high, int &partition, co
 	partition = j + 1;
 }
 
-void runQuickSort(int array[], const int start, const int end, const int m) {
-	if (end - start >= 2) {
-		int pivot = 0;
-		setPartition(array, start, end, pivot, m);
-		runQuickSort(array, start, pivot, m);
-		runQuickSort(array, pivot, end, m);
-	}
-}
-
-void runSelectionSort(int array[], int n) {
+void runSelectionSort(int array[], const int start, const int end) {
     
-	int i = 0;
-	int j = 0;
+	int i = start;
+	int j = start;
 	int idxMin = 0;
   
 	// Move boundary of unsorted sub array
-    for (; i < n - 1; i++)  {
+    for (; i < end; i++)  {
         
 		// Find smaller in this sub array
 		idxMin = i; 
-        for (j = i + 1; j < n; j++) {
+        for (j = i + 1; j <= end; j++) {
 			if (array[j] < array[idxMin]) 
 				idxMin = j;
 		}
@@ -111,20 +100,41 @@ void runSelectionSort(int array[], int n) {
     } 
 } 
 
+void runQuickSort(int array[], const int start, const int end, const int *m, const int *minPartition) {
+	
+	const int range = end - start;
+	if (range < 2)
+		return;
+
+	if (minPartition != NULL && range < *minPartition) {
+		runSelectionSort(array, start, end);
+		return;
+	}
+
+	int pivot = 0;
+	const int nMedianPoints = m != NULL ? *m : 3;
+
+	if (end - start >= 2) {
+		setPartition(array, start, end, pivot, nMedianPoints);
+		runQuickSort(array, start, pivot, &nMedianPoints, minPartition);
+		runQuickSort(array, pivot, end, &nMedianPoints, minPartition);
+	}
+}
+
 void selectionSort(int array[], int n) {
 	size = n;
 	cout << endl << "before:" << endl;
 	printArray(array);
-	runSelectionSort(array, n);
+	runSelectionSort(array, 0, n - 1);
 	cout << endl << "after:" << endl;
 	printArray(array);
 }
 
-void quickSort(int array[], const int low, const int high, const int m) {
-	size = high - low;
+void quickSort(int array[], const int low, const int high, const int m, const int *minPartition) {
+	size = high - low + 1;
 	cout << endl << "before:" << endl;
 	printArray(array);
-	runQuickSort(array, low, high, m);
+	runQuickSort(array, low, high, &m, minPartition);
 	cout << endl << "after:" << endl;
 	printArray(array);
 }
