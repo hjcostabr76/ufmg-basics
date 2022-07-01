@@ -61,6 +61,33 @@ char* getClearedInput(const char* input) {
 
 void parseInput(ifstream &inputStream, map<char, int> &lexicographyMap, map<string, int> &wordsMap);
 
+int compareWords(const string str1, const string str2, const map<char, int> lexicography) {
+    
+    const ssize_t minLength = min(str1.size(), str2.size());
+    const auto mapEnd = lexicography.end();
+    
+    for (int i = 0; i < minLength; i++) {
+        char c1 = str1[i], c2 = str2[i];
+        bool isMapTest = lexicography.find(c1) != mapEnd && lexicography.find(c2) != mapEnd;
+        int delta = isMapTest ? lexicography.at(c1) - lexicography.at(c2) : c1 - c2;
+        if (delta < 0) return -1;
+        if (delta > 0) return 1;
+    }
+    
+    return 0;
+}
+
+
+void testWordsComparison(const string s1, const string s2, const map<char, int> lexicographyMap) {
+    int cmp = compareWords(s1, s2, lexicographyMap);
+    if (cmp > 0)
+        cout << s1 << " > " << s2 << endl;
+    else if (cmp < 0)
+        cout << s2 << " > " << s1 << endl;
+    else
+        cout << s1 << " == " << s2 << endl;
+}
+
 /**
  * TODO: 2022-06-30 - Get file path from cli
  */
@@ -72,38 +99,31 @@ int main() {
     try {
         
         // const string filePath = argv[1];
-        // inputStream = ifstream("src/__test_1.i");
-        // if (!inputStream.good())
-        //     throw runtime_error("Failure as trying to read input file");
+        inputStream = ifstream("src/__test_1.i");
+        if (!inputStream.good())
+            throw runtime_error("Failure as trying to read input file");
 
-        // // Build maps
-        // map<char, int> lexicographyMap;
-        // map<string, int> wordsMap;
-        // parseInput(inputStream, lexicographyMap, wordsMap);
+        // Build maps
+        map<char, int> lexicographyMap;
+        map<string, int> wordsMap;
+        parseInput(inputStream, lexicographyMap, wordsMap);
         
-        // printLexicography(lexicographyMap);
-        // printWords(wordsMap);
+        printLexicography(lexicographyMap);
+        printWords(wordsMap);
+        // testSimpleSorters();
         
-        // Test quick sort
-        // int data[] = {8, 7, 6, 1, 0, 9, 2};
-        const int m = 3;
-        int data[] = {7, 8, 10, 2, 26, 4, 19, 5, 3, 16, 11, 6, 13, 12};
-        // int data[] = {1, 2, 3, 4, 5};
-        int n = sizeof(data) / sizeof(data[0]);
-        // quickSort(data, 0, n - 1, m);
-        selectionSort(data, n);
+        // int cmp = compareWords(wordsMap.at('adidas'), wordsMap.at('de'), lexicographyMap);
+        
+        cout << endl;
+        testWordsComparison("adidas", "de", lexicographyMap);
+        testWordsComparison("adidas", "adidas", lexicographyMap);
+        testWordsComparison("zebra", "zebra", lexicographyMap);
+        testWordsComparison("adidas", "zebra", lexicographyMap);
+        testWordsComparison("adidas", "zebra", lexicographyMap);
+        testWordsComparison("zebra", "zebr0", lexicographyMap);
+        
 
-        int data1[] = {19, 18, 16, 15, 13, 12, 21, 22, 25, 26, 16};
-        // int data1[] = {1, 2, 3, 4, 5 ,6, 7};
-        n = sizeof(data1) / sizeof(data1[0]);
-        // quickSort(data1, 0, n - 1, m);
-        selectionSort(data1, n);
-
-        int data2[] = {1, 11, 4, 2, 13, 123, 63, 92};
-        // int data2[] = {1, 2, 3, 4, 5, 6};
-        n = sizeof(data2) / sizeof(data2[0]);
-        // quickSort(data2, 0, n - 1, m);
-        selectionSort(data2, n);
+        
 
         cout << endl;
         cout << "-- The End --" << endl;
@@ -120,6 +140,44 @@ int main() {
         inputStream.close();
 
     return statusOK ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
+void testSimpleSorters() {
+    
+    // Test quick sort
+    // int data[] = {8, 7, 6, 1, 0, 9, 2};
+    // int data[] = {1, 2, 3, 4, 5};
+    int n = 0;
+    const int m = 3;
+    const int minPartition = 5;
+    
+    int data[] = {7, 8, 10, 2, 26, 4, 19, 5, 3, 16, 11, 6, 13, 12};
+    int dataAlt[] = {7, 8, 10, 2, 26, 4, 19, 5, 3, 16, 11, 6, 13, 12};
+    n = sizeof(data) / sizeof(data[0]);
+    
+    // selectionSort(data, n);
+    quickSort(data, 0, n - 1, m, NULL);
+    cout << endl << "repeating..." << endl;
+    quickSort(dataAlt, 0, n - 1, m, &minPartition);
+    cout << endl << "------------" << endl;
+
+    int data1[] = {19, 18, 16, 15, 13, 12, 21, 22, 25, 26, 16};
+    int data1Alt[] = {19, 18, 16, 15, 13, 12, 21, 22, 25, 26, 16};
+    n = sizeof(data1) / sizeof(data1[0]);
+    
+    // selectionSort(data1, n);
+    quickSort(data1, 0, n - 1, m, NULL);
+    cout << endl << "repeating..." << endl;
+    quickSort(data1Alt, 0, n - 1, m, &minPartition);
+
+    int data2[] = {1, 11, 4, 2, 13, 123, 63, 92};
+    int data2Alt[] = {1, 11, 4, 2, 13, 123, 63, 92};
+    n = sizeof(data2) / sizeof(data2[0]);
+    
+    // selectionSort(data2, n);
+    quickSort(data2, 0, n - 1, m, NULL);
+    cout << endl << "repeating..." << endl;
+    quickSort(data2Alt, 0, n - 1, m, &minPartition);
 }
 
 void parseInput(ifstream &inputStream, map<char, int> &lexicographyMap, map<string, int> &wordsMap) {
