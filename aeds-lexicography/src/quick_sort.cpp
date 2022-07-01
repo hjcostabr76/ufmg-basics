@@ -9,11 +9,10 @@ void printArray(int array[]) {
 	cout << endl;
 }
 
-// function to swap_bck elements
 void swap(int *a, int *b) {
-	int t = *a;
+	int temp = *a;
 	*a = *b;
-	*b = t;
+	*b = temp;
 }
 
 int getMedianOfMPivot(int array[], const int m, const int low, const int high, const bool dbg) {
@@ -68,35 +67,11 @@ int getMedianOfMPivot(int array[], const int m, const int low, const int high, c
 	return pivot;
 }
 
-void setPartition(int array[], const int low, const int high, int &partition) {
+void setPartition(int array[], const int low, const int high, int &partition, const int m) {
     
-	// Set pivot in the median of 03 fashion
-	// const int first = array[low];
-	// const int median = array[(high - low) / 2 + low];
-	// const int last = array[high - 1];
-    
-	int pivot = 0;
-	// if ((median > first && median < last) || (median > last && median < first))
-	// 	pivot = median;
-    // else if ((last > first && last < median) || (last > median && last < first))
-	// 	pivot = last;
-	// else{
-	// 	pivot = first;
-	// }
-
-	int foo = getMedianOfMPivot(array, 3, low, high, false);
-	// if (foo != pivot) {
-	// 	printf("\nPivot: expected x calculated -> '%d' x '%d'", pivot, foo);
-	// 	printf("\n\tlow: '%d', high: '%d' | ", low, high);
-	// 	printArray(array);
-	// 	foo = getMedianOfMPivot(array, 3, low, high, true);
-	// }
-
-	pivot = foo;
-	
-	// Sort
 	int i = low - 1;
 	int j = high;
+	int pivot = getMedianOfMPivot(array, m, low, high, false);
 
 	while (true) {
         do  { j--; } while (array[j] > pivot);
@@ -108,21 +83,48 @@ void setPartition(int array[], const int low, const int high, int &partition) {
 	partition = j + 1;
 }
 
-
-void sort(int array[], int start, int end) {
+void runQuickSort(int array[], const int start, const int end, const int m) {
 	if (end - start >= 2) {
 		int pivot = 0;
-		setPartition(array, start, end, pivot);
-		sort(array, start, pivot);
-		sort(array, pivot, end);
+		setPartition(array, start, end, pivot, m);
+		runQuickSort(array, start, pivot, m);
+		runQuickSort(array, pivot, end, m);
 	}
 }
 
-void quickSort(int array[], const int low, const int high) {
+void runSelectionSort(int array[], int n) {
+    
+	int i = 0;
+	int j = 0;
+	int idxMin = 0;
+  
+	// Move boundary of unsorted sub array
+    for (; i < n - 1; i++)  {
+        
+		// Find smaller in this sub array
+		idxMin = i; 
+        for (j = i + 1; j < n; j++) {
+			if (array[j] < array[idxMin]) 
+				idxMin = j;
+		}
+		swap(&array[idxMin], &array[i]); 
+    } 
+} 
+
+void selectionSort(int array[], int n) {
+	size = n;
+	cout << endl << "before:" << endl;
+	printArray(array);
+	runSelectionSort(array, n);
+	cout << endl << "after:" << endl;
+	printArray(array);
+}
+
+void quickSort(int array[], const int low, const int high, const int m) {
 	size = high - low;
 	cout << endl << "before:" << endl;
 	printArray(array);
-	sort(array, low, high);
+	runQuickSort(array, low, high, m);
 	cout << endl << "after:" << endl;
 	printArray(array);
 }

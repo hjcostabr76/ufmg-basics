@@ -1,5 +1,6 @@
 #include "../include/utils_debug.h"
 #include "../include/utils_string.h"
+#include "../include/quick_sort.h"
 
 #include <iostream>
 // #include <stdlib.h>
@@ -42,7 +43,6 @@ void printWords(map<string, int> wordsMap) {
     }
 }
 
-void parseInput(ifstream &inputStream, map<char, int> &lexicographyMap, map<string, int> &wordsMap);
 
 char* getClearedInput(const char* input) {
 	
@@ -59,6 +59,8 @@ char* getClearedInput(const char* input) {
 	return cleanInput;
 }
 
+void parseInput(ifstream &inputStream, map<char, int> &lexicographyMap, map<string, int> &wordsMap);
+
 /**
  * TODO: 2022-06-30 - Get file path from cli
  */
@@ -70,17 +72,38 @@ int main() {
     try {
         
         // const string filePath = argv[1];
-        inputStream = ifstream("src/__test_1.i");
-        if (!inputStream.good())
-            throw runtime_error("Failure as trying to read input file");
+        // inputStream = ifstream("src/__test_1.i");
+        // if (!inputStream.good())
+        //     throw runtime_error("Failure as trying to read input file");
 
-        // Build maps
-        map<char, int> lexicographyMap;
-        map<string, int> wordsMap;
-        parseInput(inputStream, lexicographyMap, wordsMap);
+        // // Build maps
+        // map<char, int> lexicographyMap;
+        // map<string, int> wordsMap;
+        // parseInput(inputStream, lexicographyMap, wordsMap);
         
-        printLexicography(lexicographyMap);
-        printWords(wordsMap);
+        // printLexicography(lexicographyMap);
+        // printWords(wordsMap);
+        
+        // Test quick sort
+        // int data[] = {8, 7, 6, 1, 0, 9, 2};
+        const int m = 3;
+        int data[] = {7, 8, 10, 2, 26, 4, 19, 5, 3, 16, 11, 6, 13, 12};
+        // int data[] = {1, 2, 3, 4, 5};
+        int n = sizeof(data) / sizeof(data[0]);
+        // quickSort(data, 0, n - 1, m);
+        selectionSort(data, n);
+
+        int data1[] = {19, 18, 16, 15, 13, 12, 21, 22, 25, 26, 16};
+        // int data1[] = {1, 2, 3, 4, 5 ,6, 7};
+        n = sizeof(data1) / sizeof(data1[0]);
+        // quickSort(data1, 0, n - 1, m);
+        selectionSort(data1, n);
+
+        int data2[] = {1, 11, 4, 2, 13, 123, 63, 92};
+        // int data2[] = {1, 2, 3, 4, 5, 6};
+        n = sizeof(data2) / sizeof(data2[0]);
+        // quickSort(data2, 0, n - 1, m);
+        selectionSort(data2, n);
 
         cout << endl;
         cout << "-- The End --" << endl;
