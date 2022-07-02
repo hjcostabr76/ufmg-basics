@@ -215,6 +215,7 @@ char* strStripRepeatedChar(const char* input, const char target) {
 
 const string ID_SEQ_ORDER = "#ORDEM";
 const string ID_SEQ_TXT = "#TEXTO";
+const string ID_SEQ_END = "#FIM";
 
 const string MODE_NONE = "[__NO MODE__]";
 const string MODE_TEXT = "[text mode]";
@@ -226,7 +227,7 @@ int minPartition;
 char **words;
 
 map<char, int> lexicography;
-// map<string, int> occurrenceMap;
+map<string, int> occurrenceMap;
 
 //qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
 //qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
@@ -257,7 +258,7 @@ void printLexicography() {
 }
 
 // void printWords(map<string, int> wordsMap, char **wordsList) {
-void printOccurrences(map<string, int> occurrenceMap) {
+void printOccurrences() {
     if (DEBUG_ENABLE) {
         printf("\n\nHere comes our words occurrences:\n");
         map<string, int>::iterator itr;
@@ -420,7 +421,7 @@ char* getClearedInput(const char* input) {
 	return cleanInput;
 }
 
-void parseInput(ifstream &inputStream, map<string, int> &occurrenceMap) {
+void parseInput(ifstream &inputStream) {
     
     string line = "";
     string mode = MODE_NONE;
@@ -482,15 +483,15 @@ void parseInput(ifstream &inputStream, map<string, int> &occurrenceMap) {
 
     for (itrWords = occurrenceMap.begin(); itrWords != occurrenceMap.end(); ++itrWords) {
         words[nWords] = (char *)malloc(maxLength + 1);
-        words[nWords] = (char *)itrWords->first.c_str();
+        strcpy(words[nWords], itrWords->first.c_str());
         nWords++;
     }
 }
 
 
-void writeResult(ofstream &outFile, map<string, int> occurrenceMap) { 
+void writeResult(ofstream &outFile) { 
     
-    printOccurrences(occurrenceMap);
+    printOccurrences();
     string word = "";
     bool isFound = false;
     int wordOccurrences = 0;
@@ -516,6 +517,8 @@ void writeResult(ofstream &outFile, map<string, int> occurrenceMap) {
         outFile << word << " " << to_string(wordOccurrences) << endl;
         isFound = false;
     }
+
+    outFile << ID_SEQ_END;
 }
 
 
@@ -537,12 +540,11 @@ int main() {
         if (!inputStream.good())
             throw runtime_error("Failure as trying to read input file");
 
-        map<string, int> occurrenceMap;
-        parseInput(inputStream, occurrenceMap);
+        parseInput(inputStream);
         
         // printf("\n\n ----------- BEFORE ---------------");
         printLexicography();
-        // printOccurrences();
+        printOccurrences();
         // printWords();
         
         // printf("\n\n ----------- AFTER ---------------");
@@ -554,7 +556,7 @@ int main() {
         if (!outputStream.good())
             throw runtime_error("Failure as trying to write output file");
 
-        writeResult(outputStream, occurrenceMap);
+        writeResult(outputStream);
         
         cout << endl;
         cout << endl;
