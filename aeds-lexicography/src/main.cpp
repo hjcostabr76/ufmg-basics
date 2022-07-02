@@ -221,11 +221,11 @@ const string MODE_NONE = "[__NO MODE__]";
 const string MODE_TEXT = "[text mode]";
 const string MODE_ORDER = "[order mode]";
 
-int m;
+int m = 3;
 int nWords = 0;
-int minPartition;
-char **words;
+int minPartition = 4;
 
+char **words;
 map<char, int> lexicography;
 map<string, int> occurrenceMap;
 
@@ -342,7 +342,6 @@ void sortByMedianOfM(const int low, const int high, const bool dbg) {
 	}
 
     // Sort these members among each other
-    int temp = 0;
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < m; j++) {
             if (compareWords(words[points[i]], words[points[j]]) < 0)
@@ -552,9 +551,18 @@ int main(int argc, char const *argv[]) {
                 m = atoi(value.c_str());
         }
 
+        if (inputFile == "" || outputFile == "")
+            throw invalid_argument("Missing required Input and Output file paths");
+
         inputStream = ifstream(inputFile);
         if (!inputStream.good())
             throw runtime_error("Failure as trying to read input file");
+
+        printf("\nRunning with parameters:");
+        printf("\n\tinputFile: '%s'", inputFile.c_str());
+        printf("\n\toutputFile: '%s'", outputFile.c_str());
+        printf("\n\tminPartition: '%d'", minPartition);
+        printf("\n\tm: '%d'", m);
 
 
         parseInput(inputStream);
@@ -577,7 +585,7 @@ int main(int argc, char const *argv[]) {
         
         cout << endl;
         cout << endl;
-        cout << "-- The End --" << endl;
+        cout << "-- Sorting complete --" << endl << endl;
 
     } catch (exception &error) {
         statusOK = false;
