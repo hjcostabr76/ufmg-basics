@@ -288,56 +288,54 @@ void swap(char str1[], char str2[]) {
     free(temp);
 }
 
-// int getMedianOfMPivot(int array[], const int m, const int low, const int high, const bool dbg) {
+void sortByMedianOfM(int array[], const int m, const int low, const int high, const bool dbg) {
 
-// 	const int padding = (high - low) / (m - 1);
-// 	// printf("\n m: '%d'; high: '%d'; low: '%d'; padding: '%d';", m, high, low, padding);
+    if (m > (high - low))
+        return;
 
-// 	int *edgePoints = (int *)malloc(m * sizeof(int));
-// 	int aux = 0;
-// 	for (int i = low; i < high - 1; i += padding) {
-// 		if (dbg) printf("\n aux: '%d'; ", aux);
-// 		edgePoints[aux++] = i;
-// 	}
-// 	edgePoints[aux] = high - 1;
+    // Determine which points are we gonna work on
+	const int step = (high - low) / (m - 1);
+	int *points = (int *)malloc(m * sizeof(int));
+    int aux = 0;
+	for (int i = low; i <= high - 1 && aux < (m - 1); i += step) {
+		points[aux++] = i;
+	}
+	points[aux] = high;
 
+	if (dbg) {
+		for (int i = 0; i < m; i++)
+			printf("\n edgePoints[%d] = '%d' --> '%d'", i, points[i], array[points[i]]);
+	}
 
-// 	if (dbg) {
-// 		for (int i = 0; i < m; i++)
-// 			printf("\n edgePoints[%d] = '%d' --> '%d'", i, edgePoints[i], array[edgePoints[i]]);
-// 	}
+    // Calculate the net distance among each other
+	int *diffs = (int *)malloc(m * sizeof(int));
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < m; j++) {
+			if (i != j)
+				diffs[i] += array[points[i]] - array[points[j]];
+		}
+	}
 
-// 	int *diffs = (int *)malloc(m * sizeof(int));
-// 	for (int i = 0; i < m; i++) {
-// 		for (int j = 0; j < m; j++) {
-// 			if (i != j)
-// 				diffs[i] += array[edgePoints[i]] - array[edgePoints[j]];
-// 		}
-// 	}
+	if (dbg) {
+		for (int i = 0; i < m; i++)
+			printf("\nDIFFs[%d]: '%d'", i, diffs[i]);
+	}
 
-// 	if (dbg) {
-// 		for (int i = 0; i < m; i++)
-// 			printf("\nDIFFs[%d]: '%d'", i, diffs[i]);
-// 	}
+    // Sort these members among each other
+    int temp = 0;
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < m; j++) {
+            if (array[points[i]] < array[points[j]]) {
+                temp = array[points[i]];
+                array[points[i]] = array[points[j]];
+                array[points[j]] = temp;
+            }
+        }
+    }
 
-// 	int argMin = 0;
-// 	int min = abs(diffs[0]);
-// 	for (int i = 1; i < m; i++) {
-// 		const int aux = abs(diffs[i]);
-// 		if (aux < min) {
-// 			min = aux;
-// 			argMin = i;
-// 		}
-// 	}
-
-// 	const int idxPivot = edgePoints[argMin];
-// 	const int pivot = array[idxPivot];
-
-// 	free(edgePoints);
-// 	free(diffs);
-// 	return pivot;
-// }
-
+	free(points);
+	free(diffs);
+}
 int compareWords(const char *str1, const char *str2) {
     
     const int len1 = (int)strlen(str1);
@@ -413,7 +411,7 @@ char* getClearedInput(const char* input) {
 
 	for (size_t j = 0; j < strlen(input); j++) {
         char c = input[j];
-        if (strIsAlphaNumericChar(c))
+        if (strIsAlphaNumericChar(c) || c == '-')
             cleanInput[i++] = ::tolower(c);
 	}
 	
@@ -491,7 +489,6 @@ void parseInput(ifstream &inputStream) {
 
 void writeResult(ofstream &outFile) { 
     
-    printOccurrences();
     string word = "";
     bool isFound = false;
     int wordOccurrences = 0;
@@ -503,7 +500,6 @@ void writeResult(ofstream &outFile) {
             if (strcmp(words[i], itr->first.c_str()) == 0) {
                 isFound = true;
                 wordOccurrences = itr->second;
-                printf("\nMatch: '%s'\t& '%s'\t-> '%d' / '%d'", words[i], itr->first.c_str(), itr->second, wordOccurrences);
                 break;
             }
         }
@@ -521,11 +517,24 @@ void writeResult(ofstream &outFile) {
     outFile << ID_SEQ_END;
 }
 
+void printBuceta(int test2[], const int m, const int n) {
 
-/**
- * TODO: 2022-06-30 - Get file path from cli
- */
-int main() {
+    printf("\nArray: ");
+    for (int i = 0; i < n; i ++) {
+        printf("%d, ", test2[i]);
+    }
+    printf("\n");
+    
+    sortByMedianOfM(test2, m, 0, n - 1, true);
+    printf("\nArray: ");
+    for (int i = 0; i < n; i ++) {
+        printf("%d, ", test2[i]);
+    }
+    printf("\n -------------------------------");
+
+}
+
+int main(int argc, char const *argv[]) {
     
     bool statusOK = true;
 
@@ -534,27 +543,76 @@ int main() {
     
     try {
 
-        // Parse input
-        // const string filePath = argv[1];
-        inputStream = ifstream("src/__test_1.i");
-        if (!inputStream.good())
-            throw runtime_error("Failure as trying to read input file");
+        int n = 7;
+        int test1[] = { 3, 4, 7, 2, 1, 5, 6 };
+        printBuceta(test1, 3, n);
+        printBuceta(test1, 4, n);
 
-        parseInput(inputStream);
-        
-        // printf("\n\n ----------- BEFORE ---------------");
-        printLexicography();
-        printOccurrences();
-        // printWords();
-        
-        // printf("\n\n ----------- AFTER ---------------");
-        quickSort(0, nWords - 1);
-        // printWords();
+        n = 3;
+        int test2[] = { 3, 4, 2 };
+        printBuceta(test2, 3, n);
+        printBuceta(test2, 4, n);
 
-        // Build output        
-        outputStream = ofstream("src/__test_1.o");
-        if (!outputStream.good())
-            throw runtime_error("Failure as trying to write output file");
+        n = 6;
+        int test3[] = { 3, 7, 2, 1, 5, 6 };
+        printBuceta(test3, 3, 6);
+        printBuceta(test3, 4, 6);
+
+        n = 17;
+        int test4[] = { 3, 71, 22, 11, 5, 6, 0, -1, -21, 43, 100, 26, 83, 57, 26, 83, 57 };
+        printBuceta(test4, 3, n);
+        printBuceta(test4, 4, n);
+
+        // Parse arguments
+        // string inputFile = "";
+        // string outputFile = "";
+        
+        // string param = "";
+        // string value = "";
+        // for (int i = 1; i < argc - 1; i += 2) {
+            
+        //     param = argv[i];
+        //     value = argv[i + 1];
+
+        //     if (param == "-i" || param == "-I")
+        //         inputFile = value;
+        //     else if (param == "-o" || param == "-O")
+        //         outputFile = value;
+        //     else if ((param == "-s" || param == "-S") && value.size() == 1 && isdigit(value[0]))
+        //         minPartition = atoi(value.c_str());
+        //     else if ((param == "-m" || param == "-M") && value.size() == 1 && isdigit(value[0]))
+        //         m = atoi(value.c_str());
+        // }
+
+        // // printf("\n\n----------- INPUT ------------");
+        // // printf("\ninputFile: '%s'", inputFile.c_str());
+        // // printf("\noutputFile: '%s'", outputFile.c_str());
+        // // printf("\nminPartitionStr: '%d'", minPartition);
+        // // printf("\nmStr: '%d'", m);
+
+        // if (inputFile == "" || outputFile == "")
+        //     throw invalid_argument("input and output file paths are required!");
+
+        // inputStream = ifstream(inputFile);
+        // if (!inputStream.good())
+        //     throw runtime_error("Failure as trying to read input file");
+
+
+        // parseInput(inputStream);
+        
+        // // printf("\n\n ----------- BEFORE ---------------");
+        // // printLexicography();
+        // // printOccurrences();
+        // // printWords();
+        
+        // // printf("\n\n ----------- AFTER ---------------");
+        // quickSort(0, nWords - 1);
+        // // printWords();
+
+        // // Build output        
+        // outputStream = ofstream(outputFile);
+        // if (!outputStream.good())
+        //     throw runtime_error("Failure as trying to write output file");
 
         writeResult(outputStream);
         

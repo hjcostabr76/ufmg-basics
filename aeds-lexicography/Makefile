@@ -15,7 +15,7 @@ main: src/main.cpp
 # 	$(CC) $(FLAGS_DBG) -o bin/memcheck_lexicography obj/utils_debug.o obj/utils_string.o obj/quick_sort.o obj/sorter.o src/main.cpp
 
 memcheck: obj/utils_debug.o obj/utils_string.o obj/sorter.o src/main.cpp
-	$(CC) $(FLAGS_DBG) -o bin/memcheck_lexicography obj/utils_debug.o obj/utils_string.o obj/sorter.o src/main.cpp
+	$(CC) $(FLAGS_DBG) -o bin/memcheck_lexicography src/main.cpp
 
 
 #################################################################################
